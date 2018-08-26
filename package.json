@@ -1,0 +1,32 @@
+{
+  "name": "back-jumpy",
+  "author": "David L. Goldberg",
+  "atomTestRunner": "./spec/custom-runner",
+  "main": "./dist/back-jumpy",
+  "version": "0.0.0",
+  "description": "An Atom package to return to previous cursor positions",
+  "keywords": [
+    "back",
+    "jump",
+    "jumpy",
+    "shortcut",
+    "hotkey",
+    "hot key",
+    "tab",
+    "productivity",
+    "plugin",
+    "extension"
+  ],
+  "repository": "https://github.com/DavidLGoldberg/back-jumpy",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/atom": "0.0.38",
+    "atom-jasmine3-test-runner": "3.1.0",
+    "madge": "3.2.0",
+    "typescript": "2.5.3"
+  }
+}
