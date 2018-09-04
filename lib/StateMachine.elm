@@ -97,7 +97,11 @@ update msg model =
         RequestRegisterPosition newPosition ->
             let
                 m =
-                    if newPosition == (model.current |> withDefault [ 0, 0 ]) then
+                    -- TODO: don't think i need the isJumping at all anymore of course
+                    if model.isJumping then
+                        model
+
+                    else if newPosition == (model.current |> withDefault [ 0, 0 ]) then
                         model
 
                     else
