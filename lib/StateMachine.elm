@@ -124,16 +124,21 @@ update msg model =
             else
                 let
                     newCurrent =
-                        model.backPositions |> List.head |> Maybe.withDefault [ 0, 0 ]
+                        case List.head model.backPositions of
+                            Just position ->
+                                Just position
+
+                            Nothing ->
+                                model.current
                 in
                 ( Debug.log "RequestBack: NOT is jumping"
                     { model
                         | forwardPositions = (model.current |> Maybe.withDefault [ 0, 0 ]) :: model.forwardPositions
-                        , current = Maybe.Just newCurrent
+                        , current = newCurrent
                         , backPositions = model.backPositions |> List.tail |> Maybe.withDefault []
                     }
                     |> reset
-                , Cmd.batch [ backJumped (Debug.log "maybe just newcurrent in backJumped" (Maybe.Just newCurrent)) ]
+                , Cmd.batch [ backJumped (Debug.log "maybe just newcurrent in backJumped" newCurrent) ]
                 )
 
         RequestForward ->
@@ -143,14 +148,19 @@ update msg model =
             else
                 let
                     newCurrent =
-                        model.forwardPositions |> List.head |> Maybe.withDefault [ 0, 0 ]
+                        case List.head model.forwardPositions of
+                            Just position ->
+                                Just position
+
+                            Nothing ->
+                                model.current
                 in
                 ( Debug.log "RequestForward: NOT is jumping"
                     { model
                         | backPositions = (model.current |> Maybe.withDefault [ 0, 0 ]) :: model.backPositions
-                        , current = Maybe.Just newCurrent
+                        , current = newCurrent
                         , forwardPositions = model.forwardPositions |> List.tail |> Maybe.withDefault []
                     }
                     |> reset
-                , Cmd.batch [ forwardJumped (Debug.log "maybe just newcurrent in forwardJumped" (Maybe.Just newCurrent)) ]
+                , Cmd.batch [ forwardJumped (Debug.log "maybe just newcurrent in forwardJumped" newCurrent) ]
                 )
