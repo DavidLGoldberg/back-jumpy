@@ -141,5 +141,16 @@ update msg model =
                 ( Debug.log "isJumping, do nothing" model, Cmd.none )
 
             else
-                -- TODO: this won't be the head
-                ( Debug.log "not jumping so send back" model, Cmd.batch [ forwardJumped (head model.backPositions) ] )
+                let
+                    newCurrent =
+                        model.forwardPositions |> List.head |> Maybe.withDefault [ 0, 0 ]
+                in
+                ( Debug.log "RequestForward: NOT is jumping"
+                    { model
+                        | backPositions = (model.current |> Maybe.withDefault [ 0, 0 ]) :: model.backPositions
+                        , current = Maybe.Just newCurrent
+                        , forwardPositions = model.forwardPositions |> List.tail |> Maybe.withDefault []
+                    }
+                    |> reset
+                , Cmd.batch [ forwardJumped (Debug.log "maybe just newcurrent in forwardJumped" (Maybe.Just newCurrent)) ]
+                )

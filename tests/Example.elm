@@ -72,4 +72,30 @@ suite =
                                 , current = Just [ 2, 2 ]
                             }
             ]
+        , describe "requesting forward"
+            [ test "does nothing when is jumping" <|
+                \_ ->
+                    { initial | isJumping = True }
+                        |> update RequestForward
+                        |> Tuple.first
+                        |> Expect.equal
+                            { initial
+                                | isJumping = True
+                            }
+            , test "goes forward when not jumping" <|
+                \_ ->
+                    { initial
+                        | backPositions = []
+                        , forwardPositions = [ [ 2, 2 ], [ 3, 3 ] ]
+                        , current = Just [ 1, 1 ]
+                    }
+                        |> update RequestForward
+                        |> Tuple.first
+                        |> Expect.equal
+                            { initial
+                                | backPositions = [ [ 1, 1 ] ]
+                                , forwardPositions = [ [ 3, 3 ] ]
+                                , current = Just [ 2, 2 ]
+                            }
+            ]
         ]

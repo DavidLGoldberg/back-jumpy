@@ -2950,16 +2950,48 @@ var author$project$StateMachine$update = F2(
 								])));
 				}
 			default:
-				return model.isJumping ? _Utils_Tuple2(
-					A2(elm$core$Debug$log, 'isJumping, do nothing', model),
-					elm$core$Platform$Cmd$none) : _Utils_Tuple2(
-					A2(elm$core$Debug$log, 'not jumping so send back', model),
-					elm$core$Platform$Cmd$batch(
+				if (model.isJumping) {
+					return _Utils_Tuple2(
+						A2(elm$core$Debug$log, 'isJumping, do nothing', model),
+						elm$core$Platform$Cmd$none);
+				} else {
+					var newCurrent = A2(
+						elm$core$Maybe$withDefault,
 						_List_fromArray(
-							[
-								author$project$StateMachine$forwardJumped(
-								elm$core$List$head(model.backPositions))
-							])));
+							[0, 0]),
+						elm$core$List$head(model.forwardPositions));
+					return _Utils_Tuple2(
+						author$project$StateMachine$reset(
+							A2(
+								elm$core$Debug$log,
+								'RequestForward: NOT is jumping',
+								_Utils_update(
+									model,
+									{
+										backPositions: A2(
+											elm$core$List$cons,
+											A2(
+												elm$core$Maybe$withDefault,
+												_List_fromArray(
+													[0, 0]),
+												model.current),
+											model.backPositions),
+										current: elm$core$Maybe$Just(newCurrent),
+										forwardPositions: A2(
+											elm$core$Maybe$withDefault,
+											_List_Nil,
+											elm$core$List$tail(model.forwardPositions))
+									}))),
+						elm$core$Platform$Cmd$batch(
+							_List_fromArray(
+								[
+									author$project$StateMachine$forwardJumped(
+									A2(
+										elm$core$Debug$log,
+										'maybe just newcurrent in forwardJumped',
+										elm$core$Maybe$Just(newCurrent)))
+								])));
+				}
 		}
 	});
 var elm$core$Basics$always = F2(

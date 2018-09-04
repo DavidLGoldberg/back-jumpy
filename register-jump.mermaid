@@ -59,3 +59,16 @@ sequenceDiagram
     Note over current: 1
     elm-->back: pop 1
     Note over back: []
+
+    back-->forward: *****************************************************************************************************************************************************
+    Note over elm: forward!
+    elm-->current: fetch current
+    elm->>back: add 1 (from current)
+    Note over back: [1]
+    elm-->forward: fetch head of forward
+    elm->>current: set 2
+    Note over current: 2
+    elm->>position: move to 2
+    Note over position: 2
+    elm-->forward: pop 2
+    Note over forward: [3]
