@@ -2912,11 +2912,24 @@ var author$project$StateMachine$update = F2(
 						A2(elm$core$Debug$log, 'RequestBack: is jumping so no change', model),
 						elm$core$Platform$Cmd$none);
 				} else {
-					var newCurrent = A2(
-						elm$core$Maybe$withDefault,
-						_List_fromArray(
-							[0, 0]),
-						elm$core$List$head(model.backPositions));
+					var newForwardPositions = function () {
+						var _n3 = model.current;
+						if (_n3.$ === 'Just') {
+							var position = _n3.a;
+							return A2(elm$core$List$cons, position, model.forwardPositions);
+						} else {
+							return model.forwardPositions;
+						}
+					}();
+					var newCurrent = function () {
+						var _n2 = elm$core$List$head(model.backPositions);
+						if (_n2.$ === 'Just') {
+							var position = _n2.a;
+							return elm$core$Maybe$Just(position);
+						} else {
+							return model.current;
+						}
+					}();
 					return _Utils_Tuple2(
 						author$project$StateMachine$reset(
 							A2(
@@ -2929,24 +2942,14 @@ var author$project$StateMachine$update = F2(
 											elm$core$Maybe$withDefault,
 											_List_Nil,
 											elm$core$List$tail(model.backPositions)),
-										current: elm$core$Maybe$Just(newCurrent),
-										forwardPositions: A2(
-											elm$core$List$cons,
-											A2(
-												elm$core$Maybe$withDefault,
-												_List_fromArray(
-													[0, 0]),
-												model.current),
-											model.forwardPositions)
+										current: newCurrent,
+										forwardPositions: newForwardPositions
 									}))),
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
 								[
 									author$project$StateMachine$backJumped(
-									A2(
-										elm$core$Debug$log,
-										'maybe just newcurrent in backJumped',
-										elm$core$Maybe$Just(newCurrent)))
+									A2(elm$core$Debug$log, 'maybe just newcurrent in backJumped', newCurrent))
 								])));
 				}
 			default:
@@ -2955,11 +2958,24 @@ var author$project$StateMachine$update = F2(
 						A2(elm$core$Debug$log, 'isJumping, do nothing', model),
 						elm$core$Platform$Cmd$none);
 				} else {
-					var newCurrent = A2(
-						elm$core$Maybe$withDefault,
-						_List_fromArray(
-							[0, 0]),
-						elm$core$List$head(model.forwardPositions));
+					var newCurrent = function () {
+						var _n5 = elm$core$List$head(model.forwardPositions);
+						if (_n5.$ === 'Just') {
+							var position = _n5.a;
+							return elm$core$Maybe$Just(position);
+						} else {
+							return model.current;
+						}
+					}();
+					var newBackPositions = function () {
+						var _n4 = model.current;
+						if (_n4.$ === 'Just') {
+							var position = _n4.a;
+							return A2(elm$core$List$cons, position, model.backPositions);
+						} else {
+							return model.backPositions;
+						}
+					}();
 					return _Utils_Tuple2(
 						author$project$StateMachine$reset(
 							A2(
@@ -2968,15 +2984,8 @@ var author$project$StateMachine$update = F2(
 								_Utils_update(
 									model,
 									{
-										backPositions: A2(
-											elm$core$List$cons,
-											A2(
-												elm$core$Maybe$withDefault,
-												_List_fromArray(
-													[0, 0]),
-												model.current),
-											model.backPositions),
-										current: elm$core$Maybe$Just(newCurrent),
+										backPositions: newBackPositions,
+										current: newCurrent,
 										forwardPositions: A2(
 											elm$core$Maybe$withDefault,
 											_List_Nil,
@@ -2986,10 +2995,7 @@ var author$project$StateMachine$update = F2(
 							_List_fromArray(
 								[
 									author$project$StateMachine$forwardJumped(
-									A2(
-										elm$core$Debug$log,
-										'maybe just newcurrent in forwardJumped',
-										elm$core$Maybe$Just(newCurrent)))
+									A2(elm$core$Debug$log, 'maybe just newcurrent in forwardJumped', newCurrent))
 								])));
 				}
 		}

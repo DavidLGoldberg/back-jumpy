@@ -130,10 +130,18 @@ update msg model =
 
                             Nothing ->
                                 model.current
+
+                    newForwardPositions =
+                        case model.current of
+                            Just position ->
+                                position :: model.forwardPositions
+
+                            Nothing ->
+                                model.forwardPositions
                 in
                 ( Debug.log "RequestBack: NOT is jumping"
                     { model
-                        | forwardPositions = (model.current |> withDefault [ 0, 0 ]) :: model.forwardPositions
+                        | forwardPositions = newForwardPositions
                         , current = newCurrent
                         , backPositions = model.backPositions |> List.tail |> withDefault []
                     }
@@ -154,10 +162,18 @@ update msg model =
 
                             Nothing ->
                                 model.current
+
+                    newBackPositions =
+                        case model.current of
+                            Just position ->
+                                position :: model.backPositions
+
+                            Nothing ->
+                                model.backPositions
                 in
                 ( Debug.log "RequestForward: NOT is jumping"
                     { model
-                        | backPositions = (model.current |> withDefault [ 0, 0 ]) :: model.backPositions
+                        | backPositions = newBackPositions
                         , current = newCurrent
                         , forwardPositions = model.forwardPositions |> List.tail |> withDefault []
                     }
