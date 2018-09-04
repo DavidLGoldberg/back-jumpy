@@ -133,9 +133,9 @@ update msg model =
                 in
                 ( Debug.log "RequestBack: NOT is jumping"
                     { model
-                        | forwardPositions = (model.current |> Maybe.withDefault [ 0, 0 ]) :: model.forwardPositions
+                        | forwardPositions = (model.current |> withDefault [ 0, 0 ]) :: model.forwardPositions
                         , current = newCurrent
-                        , backPositions = model.backPositions |> List.tail |> Maybe.withDefault []
+                        , backPositions = model.backPositions |> List.tail |> withDefault []
                     }
                     |> reset
                 , Cmd.batch [ backJumped (Debug.log "maybe just newcurrent in backJumped" newCurrent) ]
@@ -157,9 +157,9 @@ update msg model =
                 in
                 ( Debug.log "RequestForward: NOT is jumping"
                     { model
-                        | backPositions = (model.current |> Maybe.withDefault [ 0, 0 ]) :: model.backPositions
+                        | backPositions = (model.current |> withDefault [ 0, 0 ]) :: model.backPositions
                         , current = newCurrent
-                        , forwardPositions = model.forwardPositions |> List.tail |> Maybe.withDefault []
+                        , forwardPositions = model.forwardPositions |> List.tail |> withDefault []
                     }
                     |> reset
                 , Cmd.batch [ forwardJumped (Debug.log "maybe just newcurrent in forwardJumped" newCurrent) ]
