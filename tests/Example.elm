@@ -2,7 +2,7 @@ module Example exposing (suite)
 
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
-import StateMachine exposing (Model, Msg(..), update)
+import StateMachine exposing (Model, Msg(..), reset, update)
 import Test exposing (..)
 
 
@@ -22,8 +22,7 @@ suite =
             [ test "resets isJumping" <|
                 \_ ->
                     { initial | isJumping = True }
-                        |> update Reset
-                        |> Tuple.first
+                        |> reset
                         |> Expect.equal initial
             ]
         , describe "register a new position"

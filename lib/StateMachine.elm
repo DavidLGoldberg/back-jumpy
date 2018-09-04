@@ -1,4 +1,4 @@
-port module StateMachine exposing (Flags, Model, Msg(..), Position, backJumped, forwardJumped, init, initCmds, main, requestBack, requestForward, requestRegisterPosition, update)
+port module StateMachine exposing (Flags, Model, Msg(..), Position, backJumped, forwardJumped, init, initCmds, main, requestBack, requestForward, requestRegisterPosition, reset, update)
 
 import Html as Html exposing (..)
 import Html.Events as Events exposing (..)
@@ -56,7 +56,6 @@ type Msg
     = RequestRegisterPosition Position
     | RequestBack
     | RequestForward
-    | Reset
 
 
 type alias Model =
@@ -87,34 +86,34 @@ initCmds =
     Cmd.none
 
 
-delay : Float -> msg -> Cmd msg
-delay time msg =
-    Process.sleep time
-        |> Task.perform (\_ -> msg)
+reset : Model -> Model
+reset model =
+    { model | isJumping = False }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Reset ->
-            ( Debug.log "reset" { model | isJumping = False }, Cmd.none )
-
         RequestRegisterPosition newPosition ->
             let
                 m =
-                    case model.current of
-                        Nothing ->
-                            Debug.log "RequestRegisterPosition: Nothing"
-                                { model
-                                    | current = Just newPosition
-                                }
+                    if newPosition == (model.current |> withDefault [ 0, 0 ]) then
+                        model
 
-                        Just current ->
-                            Debug.log "RequestRegisterPosition: Just current"
-                                { model
-                                    | current = Just newPosition
-                                    , backPositions = current :: model.backPositions
-                                }
+                    else
+                        case model.current of
+                            Nothing ->
+                                Debug.log "RequestRegisterPosition: Nothing"
+                                    { model
+                                        | current = Just newPosition
+                                    }
+
+                            Just current ->
+                                Debug.log "RequestRegisterPosition: Just current"
+                                    { model
+                                        | current = Just newPosition
+                                        , backPositions = current :: model.backPositions
+                                    }
             in
             ( m, Cmd.none )
 
@@ -133,7 +132,8 @@ update msg model =
                         , current = Maybe.Just newCurrent
                         , backPositions = model.backPositions |> List.tail |> Maybe.withDefault []
                     }
-                , Cmd.batch [ backJumped (Debug.log "maybe just newcurrent in backJumped" (Maybe.Just newCurrent)), delay 30 Reset ]
+                    |> reset
+                , Cmd.batch [ backJumped (Debug.log "maybe just newcurrent in backJumped" (Maybe.Just newCurrent)) ]
                 )
 
         RequestForward ->
@@ -142,4 +142,4 @@ update msg model =
 
             else
                 -- TODO: this won't be the head
-                ( Debug.log "not jumping so send back" model, Cmd.batch [ forwardJumped (head model.backPositions), delay 10 Reset ] )
+                ( Debug.log "not jumping so send back" model, Cmd.batch [ forwardJumped (head model.backPositions) ] )

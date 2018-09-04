@@ -2795,7 +2795,6 @@ var elm$json$Json$Decode$list = _Json_decodeList;
 var author$project$StateMachine$requestRegisterPosition = _Platform_incomingPort(
 	'requestRegisterPosition',
 	elm$json$Json$Decode$list(elm$json$Json$Decode$int));
-var author$project$StateMachine$Reset = {$: 'Reset'};
 var elm$core$Maybe$destruct = F3(
 	function (_default, func, maybe) {
 		if (maybe.$ === 'Just') {
@@ -2825,167 +2824,6 @@ var author$project$StateMachine$backJumped = _Platform_outgoingPort(
 			elm$json$Json$Encode$list(elm$json$Json$Encode$int),
 			$);
 	});
-var elm$core$Process$sleep = _Process_sleep;
-var elm$core$Basics$identity = function (x) {
-	return x;
-};
-var elm$core$Task$Perform = function (a) {
-	return {$: 'Perform', a: a};
-};
-var elm$core$Task$succeed = _Scheduler_succeed;
-var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
-var elm$core$List$foldrHelper = F4(
-	function (fn, acc, ctr, ls) {
-		if (!ls.b) {
-			return acc;
-		} else {
-			var a = ls.a;
-			var r1 = ls.b;
-			if (!r1.b) {
-				return A2(fn, a, acc);
-			} else {
-				var b = r1.a;
-				var r2 = r1.b;
-				if (!r2.b) {
-					return A2(
-						fn,
-						a,
-						A2(fn, b, acc));
-				} else {
-					var c = r2.a;
-					var r3 = r2.b;
-					if (!r3.b) {
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(fn, c, acc)));
-					} else {
-						var d = r3.a;
-						var r4 = r3.b;
-						var res = (ctr > 500) ? A3(
-							elm$core$List$foldl,
-							fn,
-							acc,
-							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(
-									fn,
-									c,
-									A2(fn, d, res))));
-					}
-				}
-			}
-		}
-	});
-var elm$core$List$foldr = F3(
-	function (fn, acc, ls) {
-		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
-	});
-var elm$core$List$map = F2(
-	function (f, xs) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, acc) {
-					return A2(
-						elm$core$List$cons,
-						f(x),
-						acc);
-				}),
-			_List_Nil,
-			xs);
-	});
-var elm$core$Task$andThen = _Scheduler_andThen;
-var elm$core$Task$map = F2(
-	function (func, taskA) {
-		return A2(
-			elm$core$Task$andThen,
-			function (a) {
-				return elm$core$Task$succeed(
-					func(a));
-			},
-			taskA);
-	});
-var elm$core$Task$map2 = F3(
-	function (func, taskA, taskB) {
-		return A2(
-			elm$core$Task$andThen,
-			function (a) {
-				return A2(
-					elm$core$Task$andThen,
-					function (b) {
-						return elm$core$Task$succeed(
-							A2(func, a, b));
-					},
-					taskB);
-			},
-			taskA);
-	});
-var elm$core$Task$sequence = function (tasks) {
-	return A3(
-		elm$core$List$foldr,
-		elm$core$Task$map2(elm$core$List$cons),
-		elm$core$Task$succeed(_List_Nil),
-		tasks);
-};
-var elm$core$Platform$sendToApp = _Platform_sendToApp;
-var elm$core$Task$spawnCmd = F2(
-	function (router, _n0) {
-		var task = _n0.a;
-		return _Scheduler_spawn(
-			A2(
-				elm$core$Task$andThen,
-				elm$core$Platform$sendToApp(router),
-				task));
-	});
-var elm$core$Task$onEffects = F3(
-	function (router, commands, state) {
-		return A2(
-			elm$core$Task$map,
-			function (_n0) {
-				return _Utils_Tuple0;
-			},
-			elm$core$Task$sequence(
-				A2(
-					elm$core$List$map,
-					elm$core$Task$spawnCmd(router),
-					commands)));
-	});
-var elm$core$Task$onSelfMsg = F3(
-	function (_n0, _n1, _n2) {
-		return elm$core$Task$succeed(_Utils_Tuple0);
-	});
-var elm$core$Task$cmdMap = F2(
-	function (tagger, _n0) {
-		var task = _n0.a;
-		return elm$core$Task$Perform(
-			A2(elm$core$Task$map, tagger, task));
-	});
-_Platform_effectManagers['Task'] = _Platform_createManager(elm$core$Task$init, elm$core$Task$onEffects, elm$core$Task$onSelfMsg, elm$core$Task$cmdMap);
-var elm$core$Task$command = _Platform_leaf('Task');
-var elm$core$Task$perform = F2(
-	function (toMessage, task) {
-		return elm$core$Task$command(
-			elm$core$Task$Perform(
-				A2(elm$core$Task$map, toMessage, task)));
-	});
-var author$project$StateMachine$delay = F2(
-	function (time, msg) {
-		return A2(
-			elm$core$Task$perform,
-			function (_n0) {
-				return msg;
-			},
-			elm$core$Process$sleep(time));
-	});
 var author$project$StateMachine$forwardJumped = _Platform_outgoingPort(
 	'forwardJumped',
 	function ($) {
@@ -2995,6 +2833,11 @@ var author$project$StateMachine$forwardJumped = _Platform_outgoingPort(
 			elm$json$Json$Encode$list(elm$json$Json$Encode$int),
 			$);
 	});
+var author$project$StateMachine$reset = function (model) {
+	return _Utils_update(
+		model,
+		{isJumping: false});
+};
 var elm$core$Debug$log = _Debug_log;
 var elm$core$List$head = function (list) {
 	if (list.b) {
@@ -3026,39 +2869,40 @@ var elm$core$Maybe$withDefault = F2(
 var author$project$StateMachine$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 'Reset':
-				return _Utils_Tuple2(
-					A2(
-						elm$core$Debug$log,
-						'reset',
-						_Utils_update(
-							model,
-							{isJumping: false})),
-					elm$core$Platform$Cmd$none);
 			case 'RequestRegisterPosition':
 				var newPosition = msg.a;
 				var m = function () {
-					var _n1 = model.current;
-					if (_n1.$ === 'Nothing') {
-						return A2(
-							elm$core$Debug$log,
-							'RequestRegisterPosition: Nothing',
-							_Utils_update(
-								model,
-								{
-									current: elm$core$Maybe$Just(newPosition)
-								}));
+					if (_Utils_eq(
+						newPosition,
+						A2(
+							elm$core$Maybe$withDefault,
+							_List_fromArray(
+								[0, 0]),
+							model.current))) {
+						return model;
 					} else {
-						var current = _n1.a;
-						return A2(
-							elm$core$Debug$log,
-							'RequestRegisterPosition: Just current',
-							_Utils_update(
-								model,
-								{
-									backPositions: A2(elm$core$List$cons, current, model.backPositions),
-									current: elm$core$Maybe$Just(newPosition)
-								}));
+						var _n1 = model.current;
+						if (_n1.$ === 'Nothing') {
+							return A2(
+								elm$core$Debug$log,
+								'RequestRegisterPosition: Nothing',
+								_Utils_update(
+									model,
+									{
+										current: elm$core$Maybe$Just(newPosition)
+									}));
+						} else {
+							var current = _n1.a;
+							return A2(
+								elm$core$Debug$log,
+								'RequestRegisterPosition: Just current',
+								_Utils_update(
+									model,
+									{
+										backPositions: A2(elm$core$List$cons, current, model.backPositions),
+										current: elm$core$Maybe$Just(newPosition)
+									}));
+						}
 					}
 				}();
 				return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
@@ -3074,26 +2918,27 @@ var author$project$StateMachine$update = F2(
 							[0, 0]),
 						elm$core$List$head(model.backPositions));
 					return _Utils_Tuple2(
-						A2(
-							elm$core$Debug$log,
-							'RequestBack: NOT is jumping',
-							_Utils_update(
-								model,
-								{
-									backPositions: A2(
-										elm$core$Maybe$withDefault,
-										_List_Nil,
-										elm$core$List$tail(model.backPositions)),
-									current: elm$core$Maybe$Just(newCurrent),
-									forwardPositions: A2(
-										elm$core$List$cons,
-										A2(
+						author$project$StateMachine$reset(
+							A2(
+								elm$core$Debug$log,
+								'RequestBack: NOT is jumping',
+								_Utils_update(
+									model,
+									{
+										backPositions: A2(
 											elm$core$Maybe$withDefault,
-											_List_fromArray(
-												[0, 0]),
-											model.current),
-										model.forwardPositions)
-								})),
+											_List_Nil,
+											elm$core$List$tail(model.backPositions)),
+										current: elm$core$Maybe$Just(newCurrent),
+										forwardPositions: A2(
+											elm$core$List$cons,
+											A2(
+												elm$core$Maybe$withDefault,
+												_List_fromArray(
+													[0, 0]),
+												model.current),
+											model.forwardPositions)
+									}))),
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
 								[
@@ -3101,8 +2946,7 @@ var author$project$StateMachine$update = F2(
 									A2(
 										elm$core$Debug$log,
 										'maybe just newcurrent in backJumped',
-										elm$core$Maybe$Just(newCurrent))),
-									A2(author$project$StateMachine$delay, 30, author$project$StateMachine$Reset)
+										elm$core$Maybe$Just(newCurrent)))
 								])));
 				}
 			default:
@@ -3114,8 +2958,7 @@ var author$project$StateMachine$update = F2(
 						_List_fromArray(
 							[
 								author$project$StateMachine$forwardJumped(
-								elm$core$List$head(model.backPositions)),
-								A2(author$project$StateMachine$delay, 10, author$project$StateMachine$Reset)
+								elm$core$List$head(model.backPositions))
 							])));
 		}
 	});
