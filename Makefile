@@ -1,4 +1,12 @@
-default: typescript
+default: elm typescript
+
+elm:
+	/usr/local/bin/elm make lib/StateMachine.elm --output=dist/elm/StateMachine.js --optimize
+	elm-test
+
+elm-debug:
+	/usr/local/bin/elm make lib/StateMachine.elm --output=dist/elm/StateMachine.js
+	elm-test
 
 typescript:
 	npm install

@@ -1,0 +1,61 @@
+sequenceDiagram
+    participant back
+    participant current
+    participant position
+    participant elm
+    participant forward
+
+    back-->forward: *****************************************************************************************************************************************************
+    Note over current: Nothing
+
+    back-->forward: *****************************************************************************************************************************************************
+    Note over position: 1
+    position-->>elm: register 1
+    elm-->current: fetch from current
+    Note over back,elm: (DO NOT ADD to BACK back because current had Nothing)
+    elm->>current: set 1
+    Note over current: 1
+
+    back-->forward: *****************************************************************************************************************************************************
+    Note over position: 2
+    position-->>elm: register 2
+    elm-->current: fetch from current
+    elm->>back: add 1 (from current)
+    Note over back: [1]
+    elm->>current: set 2
+    Note over current: 2
+
+    back-->forward: *****************************************************************************************************************************************************
+    Note over position: 3
+    position-->>elm: register 3
+    elm-->current: fetch from current
+    elm->>back: add 2 (from current)
+    Note over back: [2, 1]
+    elm->>current: set 3
+    Note over current: 3
+
+    back-->forward: *****************************************************************************************************************************************************
+    Note over elm: back!
+    elm-->current: fetch current
+    elm->>forward: add 3 (from current)
+    Note over forward: [3]
+    elm-->back: fetch head of back
+    elm->>position: move to 2
+    Note over position: 2
+    elm->>current: set 2
+    Note over current: 2
+    elm-->back: pop 2
+    Note over back: [1]
+
+    back-->forward: *****************************************************************************************************************************************************
+    Note over elm: back!
+    elm-->current: fetch current
+    elm->>forward: add 2 (from current)
+    Note over forward: [2,3]
+    elm-->back: fetch head of back
+    elm->>position: move to 1
+    Note over position: 1
+    elm->>current: set 1
+    Note over current: 1
+    elm-->back: pop 1
+    Note over back: []

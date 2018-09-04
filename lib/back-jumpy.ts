@@ -1,5 +1,6 @@
 'use babel';
 
+import * as elmApp from '../dist/elm/StateMachine';
 import BackJumpyView from './back-jumpy-view';
 
 module.exports = {
@@ -7,7 +8,9 @@ module.exports = {
     backJumpyView: null,
 
     activate(state: any) {
-        this.backJumpyView = new BackJumpyView(state.backJumpyViewState);
+        console.assert(elmApp.Elm.StateMachine);
+        const stateMachine = elmApp.Elm.StateMachine.init();
+        this.backJumpyView = new BackJumpyView(state.backJumpyViewState, stateMachine);
     },
 
     deactivate() {
