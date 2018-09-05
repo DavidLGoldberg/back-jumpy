@@ -9,25 +9,19 @@ class BackJumpyView {
         this.stateMachine = stateMachine;
         // subscriptions:
         this.stateMachine.ports.backJumped.subscribe((position) => {
-            console.log('position', position);
             atom.workspace.getActiveTextEditor().setCursorBufferPosition(position);
-            console.log('back jumped');
-            //animateBeacon editor, position
+            // animateBeacon editor, position
         });
         this.stateMachine.ports.forwardJumped.subscribe((position) => {
-            console.log('position', position);
             atom.workspace.getActiveTextEditor().setCursorBufferPosition(position);
-            console.log('forward jumped');
             //animateBeacon editor, position
         });
         // commands
         this.disposables.add(atom.commands.add('atom-workspace', {
             'back-jumpy:back': () => {
-                console.log('backward jump requested');
                 this.stateMachine.ports.requestBack.send(null);
             },
             'back-jumpy:forward': () => {
-                console.log('forward jump requested');
                 this.stateMachine.ports.requestForward.send(null);
             }
         }));
@@ -38,7 +32,6 @@ class BackJumpyView {
                     event.newBufferPosition.row,
                     event.newBufferPosition.column
                 ];
-                console.log('send newPosition', newPosition);
                 this.stateMachine.ports.requestRegisterPosition.send(newPosition);
             }));
         }));
