@@ -40,7 +40,6 @@ class BackJumpyView {
         if (!atom.workspace.isTextEditor(paneItem)) {
             return;
         }
-        // TODO: Should this get the 0,0 exclusion like jumpy-beacon? Probably needs to be excluded from list instead.
         const textEditor = paneItem;
         const position = textEditor.getCursorScreenPosition();
         const range = atom_1.Range(position, position);
