@@ -2,7 +2,7 @@ module Example exposing (suite)
 
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
-import StateMachine exposing (Model, Msg(..), reset, update)
+import StateMachine exposing (Model, Msg(..), update)
 import Test exposing (..)
 
 
@@ -11,21 +11,13 @@ suite =
     let
         initial : Model
         initial =
-            { isJumping = False
-            , backPositions = []
+            { backPositions = []
             , forwardPositions = []
             , current = Nothing
             }
     in
     describe "Back-jumpy"
-        [ describe "reset"
-            [ test "resets isJumping" <|
-                \_ ->
-                    { initial | isJumping = True }
-                        |> reset
-                        |> Expect.equal initial
-            ]
-        , describe "register a new position"
+        [ describe "register a new position"
             [ test "from clear state" <|
                 \_ ->
                     initial
@@ -48,16 +40,13 @@ suite =
                             }
             ]
         , describe "requesting back"
-            [ test "does nothing when is jumping" <|
+            [ test "does nothing when no where to go" <|
                 \_ ->
-                    { initial | isJumping = True }
+                    initial
                         |> update RequestBack
                         |> Tuple.first
-                        |> Expect.equal
-                            { initial
-                                | isJumping = True
-                            }
-            , test "pops back when not jumping" <|
+                        |> Expect.equal initial
+            , test "goes back" <|
                 \_ ->
                     { initial
                         | backPositions = [ [ 2, 2 ], [ 1, 1 ] ]
@@ -71,18 +60,29 @@ suite =
                                 , forwardPositions = [ [ 3, 3 ] ]
                                 , current = Just [ 2, 2 ]
                             }
+            , test "does nothing when no more back left" <|
+                \_ ->
+                    let
+                        noMoreBacks =
+                            { initial
+                                | backPositions = []
+                                , current = Just [ 1, 1 ]
+                                , forwardPositions = [ [ 3, 3 ], [ 2, 3 ] ]
+                            }
+                    in
+                    noMoreBacks
+                        |> update RequestBack
+                        |> Tuple.first
+                        |> Expect.equal noMoreBacks
             ]
         , describe "requesting forward"
-            [ test "does nothing when is jumping" <|
+            [ test "does nothing when no where to go" <|
                 \_ ->
-                    { initial | isJumping = True }
+                    initial
                         |> update RequestForward
                         |> Tuple.first
-                        |> Expect.equal
-                            { initial
-                                | isJumping = True
-                            }
-            , test "goes forward when not jumping" <|
+                        |> Expect.equal initial
+            , test "goes forward" <|
                 \_ ->
                     { initial
                         | backPositions = []

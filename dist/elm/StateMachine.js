@@ -2300,6 +2300,7 @@ var author$project$StateMachine$RequestForward = {$: 'RequestForward'};
 var author$project$StateMachine$RequestRegisterPosition = function (a) {
 	return {$: 'RequestRegisterPosition', a: a};
 };
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
@@ -2563,7 +2564,6 @@ var elm$core$Array$initialize = F2(
 var elm$core$Maybe$Just = function (a) {
 	return {$: 'Just', a: a};
 };
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$Result$Err = function (a) {
 	return {$: 'Err', a: a};
 };
@@ -2777,11 +2777,10 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 	});
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var author$project$StateMachine$initCmds = elm$core$Platform$Cmd$none;
 var author$project$StateMachine$init = function (flags) {
 	return _Utils_Tuple2(
-		{backPositions: _List_Nil, current: elm$core$Maybe$Nothing, forwardPositions: _List_Nil, isJumping: false},
-		author$project$StateMachine$initCmds);
+		{backPositions: _List_Nil, current: elm$core$Maybe$Nothing, forwardPositions: _List_Nil},
+		elm$core$Platform$Cmd$none);
 };
 var elm$json$Json$Decode$null = _Json_decodeNull;
 var author$project$StateMachine$requestBack = _Platform_incomingPort(
@@ -2833,12 +2832,6 @@ var author$project$StateMachine$forwardJumped = _Platform_outgoingPort(
 			elm$json$Json$Encode$list(elm$json$Json$Encode$int),
 			$);
 	});
-var author$project$StateMachine$reset = function (model) {
-	return _Utils_update(
-		model,
-		{isJumping: false});
-};
-var elm$core$Debug$log = _Debug_log;
 var elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -2883,40 +2876,38 @@ var author$project$StateMachine$update = F2(
 					} else {
 						var _n1 = model.current;
 						if (_n1.$ === 'Nothing') {
-							return A2(
-								elm$core$Debug$log,
-								'RequestRegisterPosition: Nothing',
-								_Utils_update(
-									model,
-									{
-										current: elm$core$Maybe$Just(newPosition)
-									}));
+							return _Utils_update(
+								model,
+								{
+									current: elm$core$Maybe$Just(newPosition)
+								});
 						} else {
 							var current = _n1.a;
-							return A2(
-								elm$core$Debug$log,
-								'RequestRegisterPosition: Just current',
-								_Utils_update(
-									model,
-									{
-										backPositions: A2(elm$core$List$cons, current, model.backPositions),
-										current: elm$core$Maybe$Just(newPosition)
-									}));
+							return _Utils_update(
+								model,
+								{
+									backPositions: A2(elm$core$List$cons, current, model.backPositions),
+									current: elm$core$Maybe$Just(newPosition)
+								});
 						}
 					}
 				}();
 				return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
 			case 'RequestBack':
-				if (model.isJumping) {
-					return _Utils_Tuple2(
-						A2(elm$core$Debug$log, 'RequestBack: is jumping so no change', model),
-						elm$core$Platform$Cmd$none);
+				if (!elm$core$List$length(model.backPositions)) {
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				} else {
 					var newForwardPositions = function () {
 						var _n3 = model.current;
 						if (_n3.$ === 'Just') {
 							var position = _n3.a;
-							return A2(elm$core$List$cons, position, model.forwardPositions);
+							var _n4 = elm$core$List$head(model.forwardPositions);
+							if (_n4.$ === 'Just') {
+								var headOfForward = _n4.a;
+								return _Utils_eq(position, headOfForward) ? model.forwardPositions : A2(elm$core$List$cons, position, model.forwardPositions);
+							} else {
+								return A2(elm$core$List$cons, position, model.forwardPositions);
+							}
 						} else {
 							return model.forwardPositions;
 						}
@@ -2931,71 +2922,65 @@ var author$project$StateMachine$update = F2(
 						}
 					}();
 					return _Utils_Tuple2(
-						author$project$StateMachine$reset(
-							A2(
-								elm$core$Debug$log,
-								'RequestBack: NOT is jumping',
-								_Utils_update(
-									model,
-									{
-										backPositions: A2(
-											elm$core$Maybe$withDefault,
-											_List_Nil,
-											elm$core$List$tail(model.backPositions)),
-										current: newCurrent,
-										forwardPositions: newForwardPositions
-									}))),
+						_Utils_update(
+							model,
+							{
+								backPositions: A2(
+									elm$core$Maybe$withDefault,
+									_List_Nil,
+									elm$core$List$tail(model.backPositions)),
+								current: newCurrent,
+								forwardPositions: newForwardPositions
+							}),
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
 								[
-									author$project$StateMachine$backJumped(
-									A2(elm$core$Debug$log, 'maybe just newcurrent in backJumped', newCurrent))
+									author$project$StateMachine$backJumped(newCurrent)
 								])));
 				}
 			default:
-				if (model.isJumping) {
-					return _Utils_Tuple2(
-						A2(elm$core$Debug$log, 'isJumping, do nothing', model),
-						elm$core$Platform$Cmd$none);
+				if (!elm$core$List$length(model.forwardPositions)) {
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				} else {
 					var newCurrent = function () {
-						var _n5 = elm$core$List$head(model.forwardPositions);
-						if (_n5.$ === 'Just') {
-							var position = _n5.a;
+						var _n7 = elm$core$List$head(model.forwardPositions);
+						if (_n7.$ === 'Just') {
+							var position = _n7.a;
 							return elm$core$Maybe$Just(position);
 						} else {
 							return model.current;
 						}
 					}();
 					var newBackPositions = function () {
-						var _n4 = model.current;
-						if (_n4.$ === 'Just') {
-							var position = _n4.a;
-							return A2(elm$core$List$cons, position, model.backPositions);
+						var _n5 = model.current;
+						if (_n5.$ === 'Just') {
+							var position = _n5.a;
+							var _n6 = elm$core$List$head(model.backPositions);
+							if (_n6.$ === 'Just') {
+								var headOfBack = _n6.a;
+								return _Utils_eq(position, headOfBack) ? model.backPositions : A2(elm$core$List$cons, position, model.backPositions);
+							} else {
+								return A2(elm$core$List$cons, position, model.backPositions);
+							}
 						} else {
 							return model.backPositions;
 						}
 					}();
 					return _Utils_Tuple2(
-						author$project$StateMachine$reset(
-							A2(
-								elm$core$Debug$log,
-								'RequestForward: NOT is jumping',
-								_Utils_update(
-									model,
-									{
-										backPositions: newBackPositions,
-										current: newCurrent,
-										forwardPositions: A2(
-											elm$core$Maybe$withDefault,
-											_List_Nil,
-											elm$core$List$tail(model.forwardPositions))
-									}))),
+						_Utils_update(
+							model,
+							{
+								backPositions: newBackPositions,
+								current: newCurrent,
+								forwardPositions: A2(
+									elm$core$Maybe$withDefault,
+									_List_Nil,
+									elm$core$List$tail(model.forwardPositions))
+							}),
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
 								[
-									author$project$StateMachine$forwardJumped(
-									A2(elm$core$Debug$log, 'maybe just newcurrent in forwardJumped', newCurrent))
+									author$project$StateMachine$forwardJumped(newCurrent)
 								])));
 				}
 		}

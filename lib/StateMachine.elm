@@ -1,9 +1,9 @@
-port module StateMachine exposing (Flags, Model, Msg(..), Position, backJumped, forwardJumped, init, initCmds, main, requestBack, requestForward, requestRegisterPosition, reset, update)
+port module StateMachine exposing (Flags, Model, Msg(..), Position, backJumped, forwardJumped, init, main, requestBack, requestForward, requestRegisterPosition, update)
 
 import Html as Html exposing (..)
 import Html.Events as Events exposing (..)
 import Json.Decode as Json
-import List exposing (any, head)
+import List exposing (..)
 import Maybe exposing (..)
 import Process
 import Task
@@ -59,8 +59,7 @@ type Msg
 
 
 type alias Model =
-    { isJumping : Bool
-    , backPositions : List Position
+    { backPositions : List Position
     , forwardPositions : List Position
     , current : Maybe Position
     }
@@ -72,23 +71,12 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { isJumping = False
-      , backPositions = []
+    ( { backPositions = []
       , forwardPositions = []
       , current = Nothing
       }
-    , initCmds
+    , Cmd.none
     )
-
-
-initCmds : Cmd Msg
-initCmds =
-    Cmd.none
-
-
-reset : Model -> Model
-reset model =
-    { model | isJumping = False }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -97,38 +85,34 @@ update msg model =
         RequestRegisterPosition newPosition ->
             let
                 m =
-                    -- TODO: don't think i need the isJumping at all anymore of course
-                    if model.isJumping then
-                        model
-
-                    else if newPosition == (model.current |> withDefault [ 0, 0 ]) then
+                    if newPosition == (model.current |> withDefault [ 0, 0 ]) then
                         model
 
                     else
                         case model.current of
                             Nothing ->
-                                Debug.log "RequestRegisterPosition: Nothing"
-                                    { model
-                                        | current = Just newPosition
-                                    }
+                                { model
+                                    | current = Just newPosition
+                                }
 
                             Just current ->
-                                Debug.log "RequestRegisterPosition: Just current"
-                                    { model
-                                        | current = Just newPosition
-                                        , backPositions = current :: model.backPositions
-                                    }
+                                { model
+                                    | current = Just newPosition
+                                    , backPositions = current :: model.backPositions
+                                }
             in
             ( m, Cmd.none )
 
+        -- The following 2 handlers are symetrical (no diff of note) ...could be abstracted, but might be more complicated
         RequestBack ->
-            if model.isJumping then
-                ( Debug.log "RequestBack: is jumping so no change" model, Cmd.none )
+            if length model.backPositions == 0 then
+                -- TODO: Could do a cmd for a port to visual bell or status or both
+                ( model, Cmd.none )
 
             else
                 let
                     newCurrent =
-                        case List.head model.backPositions of
+                        case head model.backPositions of
                             Just position ->
                                 Just position
 
@@ -138,29 +122,40 @@ update msg model =
                     newForwardPositions =
                         case model.current of
                             Just position ->
-                                position :: model.forwardPositions
+                                case head model.forwardPositions of
+                                    Just headOfForward ->
+                                        if position == headOfForward then
+                                            -- no change already have it.
+                                            model.forwardPositions
+
+                                        else
+                                            --new position
+                                            position :: model.forwardPositions
+
+                                    Nothing ->
+                                        -- empty so just concat it always
+                                        position :: model.forwardPositions
 
                             Nothing ->
                                 model.forwardPositions
                 in
-                ( Debug.log "RequestBack: NOT is jumping"
-                    { model
-                        | forwardPositions = newForwardPositions
-                        , current = newCurrent
-                        , backPositions = model.backPositions |> List.tail |> withDefault []
-                    }
-                    |> reset
-                , Cmd.batch [ backJumped (Debug.log "maybe just newcurrent in backJumped" newCurrent) ]
+                ( { model
+                    | forwardPositions = newForwardPositions
+                    , current = newCurrent
+                    , backPositions = model.backPositions |> tail |> withDefault []
+                  }
+                , Cmd.batch [ backJumped newCurrent ]
                 )
 
         RequestForward ->
-            if model.isJumping then
-                ( Debug.log "isJumping, do nothing" model, Cmd.none )
+            if length model.forwardPositions == 0 then
+                -- TODO: Could do a cmd for a port to visual bell or status or both
+                ( model, Cmd.none )
 
             else
                 let
                     newCurrent =
-                        case List.head model.forwardPositions of
+                        case head model.forwardPositions of
                             Just position ->
                                 Just position
 
@@ -170,17 +165,27 @@ update msg model =
                     newBackPositions =
                         case model.current of
                             Just position ->
-                                position :: model.backPositions
+                                case head model.backPositions of
+                                    Just headOfBack ->
+                                        if position == headOfBack then
+                                            -- no change already have it.
+                                            model.backPositions
+
+                                        else
+                                            --new position
+                                            position :: model.backPositions
+
+                                    Nothing ->
+                                        -- empty so just concat it always
+                                        position :: model.backPositions
 
                             Nothing ->
                                 model.backPositions
                 in
-                ( Debug.log "RequestForward: NOT is jumping"
-                    { model
-                        | backPositions = newBackPositions
-                        , current = newCurrent
-                        , forwardPositions = model.forwardPositions |> List.tail |> withDefault []
-                    }
-                    |> reset
-                , Cmd.batch [ forwardJumped (Debug.log "maybe just newcurrent in forwardJumped" newCurrent) ]
+                ( { model
+                    | backPositions = newBackPositions
+                    , current = newCurrent
+                    , forwardPositions = model.forwardPositions |> List.tail |> withDefault []
+                  }
+                , Cmd.batch [ forwardJumped newCurrent ]
                 )
