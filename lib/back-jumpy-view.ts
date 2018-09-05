@@ -13,12 +13,10 @@ export default class BackJumpyView {
 
         // subscriptions:
         this.stateMachine.ports.backJumped.subscribe((position: any) => {
-            atom.workspace.getActiveTextEditor().setCursorBufferPosition(position)
-            // animateBeacon editor, position
+            this.jump(position);
         });
         this.stateMachine.ports.forwardJumped.subscribe((position: any) => {
-            atom.workspace.getActiveTextEditor().setCursorBufferPosition(position)
-            //animateBeacon editor, position
+            this.jump(position);
         });
 
         // commands
@@ -49,13 +47,13 @@ export default class BackJumpyView {
         );
     }
 
-    animateBeacon(paneItem: Pane) {
-        if(!atom.workspace.isTextEditor(paneItem)) {
-            return;
-        }
+    jump(position: any) {
+        const textEditor:TextEditor = atom.workspace.getActiveTextEditor();
+        textEditor.setCursorBufferPosition(position);
+        this.animateBeacon(textEditor, position);
+    }
 
-        const textEditor = paneItem;
-        const position = textEditor.getCursorScreenPosition();
+    animateBeacon(textEditor: TextEditor, position: any) {
         const range = Range(position, position);
         const marker = textEditor.markScreenRange(range, { invalidate: 'never' });
         const beacon = document.createElement('span');
