@@ -98,7 +98,9 @@ update msg model =
                             Just current ->
                                 { model
                                     | current = Just newPosition
-                                    , backPositions = current :: model.backPositions
+
+                                    --This is really the only asymetry.  Forward positions are only born out of history.
+                                    , backPositions = current :: take 1000 model.backPositions
                                 }
             in
             ( m, Cmd.none )
