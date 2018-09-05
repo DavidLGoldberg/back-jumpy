@@ -65,7 +65,7 @@ export default class BackJumpyView {
             });
         setTimeout(function() {
             marker.destroy();
-        } , 200);
+        } , 150);
     }
 
     // Returns an object that can be retrieved when package is activated
