@@ -97,5 +97,19 @@ suite =
                                 , forwardPositions = [ [ 3, 3 ] ]
                                 , current = Just [ 2, 2 ]
                             }
+            , test "does nothing when no more forward left" <|
+                \_ ->
+                    let
+                        noMoreForwards =
+                            { initial
+                                | backPositions = [ [ 1, 1 ] ]
+                                , current = Just [ 2, 2 ]
+                                , forwardPositions = []
+                            }
+                    in
+                    noMoreForwards
+                        |> update RequestForward
+                        |> Tuple.first
+                        |> Expect.equal noMoreForwards
             ]
         ]
