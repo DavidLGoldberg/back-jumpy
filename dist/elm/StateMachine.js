@@ -77,14 +77,14 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
   return fun.a === 9 ? fun.f(a, b, c, d, e, f, g, h, i) : fun(a)(b)(c)(d)(e)(f)(g)(h)(i);
 }
 
-console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.0/optimize for better performance and smaller assets.');
 
 
-var _List_Nil_UNUSED = { $: 0 };
-var _List_Nil = { $: '[]' };
 
-function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
+var _List_Nil = { $: 0 };
+var _List_Nil_UNUSED = { $: '[]' };
+
+function _List_Cons(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons_UNUSED(hd, tl) { return { $: '::', a: hd, b: tl }; }
 
 
 var _List_cons = F2(_List_Cons);
@@ -194,7 +194,7 @@ function _Utils_eqHelp(x, y, depth, stack)
 		return false;
 	}
 
-	/**/
+	/**_UNUSED/
 	if (x.$ === 'Set_elm_builtin')
 	{
 		x = elm$core$Set$toList(x);
@@ -207,7 +207,7 @@ function _Utils_eqHelp(x, y, depth, stack)
 	}
 	//*/
 
-	/**_UNUSED/
+	/**/
 	if (x.$ < 0)
 	{
 		x = elm$core$Dict$toList(x);
@@ -242,7 +242,7 @@ function _Utils_cmp(x, y, ord)
 		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
 	}
 
-	/**/
+	/**_UNUSED/
 	if (x instanceof String)
 	{
 		var a = x.valueOf();
@@ -251,10 +251,10 @@ function _Utils_cmp(x, y, ord)
 	}
 	//*/
 
-	/**_UNUSED/
+	/**/
 	if (!x.$)
 	//*/
-	/**/
+	/**_UNUSED/
 	if (x.$[0] === '#')
 	//*/
 	{
@@ -284,17 +284,17 @@ var _Utils_compare = F2(function(x, y)
 
 // COMMON VALUES
 
-var _Utils_Tuple0_UNUSED = 0;
-var _Utils_Tuple0 = { $: '#0' };
+var _Utils_Tuple0 = 0;
+var _Utils_Tuple0_UNUSED = { $: '#0' };
 
-function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
+function _Utils_Tuple2(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2_UNUSED(a, b) { return { $: '#2', a: a, b: b }; }
 
-function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+function _Utils_Tuple3(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3_UNUSED(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
 
-function _Utils_chr_UNUSED(c) { return c; }
-function _Utils_chr(c) { return new String(c); }
+function _Utils_chr(c) { return c; }
+function _Utils_chr_UNUSED(c) { return new String(c); }
 
 
 // RECORDS
@@ -499,12 +499,12 @@ var _JsArray_appendN = F3(function(n, dest, source)
 
 // LOG
 
-var _Debug_log_UNUSED = F2(function(tag, value)
+var _Debug_log = F2(function(tag, value)
 {
 	return value;
 });
 
-var _Debug_log = F2(function(tag, value)
+var _Debug_log_UNUSED = F2(function(tag, value)
 {
 	console.log(tag + ': ' + _Debug_toString(value));
 	return value;
@@ -530,12 +530,12 @@ function _Debug_todoCase(moduleName, region, value)
 
 // TO STRING
 
-function _Debug_toString_UNUSED(value)
+function _Debug_toString(value)
 {
 	return '<internals>';
 }
 
-function _Debug_toString(value)
+function _Debug_toString_UNUSED(value)
 {
 	return _Debug_toAnsiString(false, value);
 }
@@ -706,13 +706,13 @@ function _Debug_internalColor(ansi, string)
 // CRASH
 
 
-function _Debug_crash_UNUSED(identifier)
+function _Debug_crash(identifier)
 {
 	throw new Error('https://github.com/elm/core/blob/1.0.0/hints/' + identifier + '.md');
 }
 
 
-function _Debug_crash(identifier, fact1, fact2, fact3, fact4)
+function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 {
 	switch(identifier)
 	{
@@ -770,11 +770,11 @@ function _Debug_crash(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.start.line === region.end.line)
+	if (region.ab.J === region.ag.J)
 	{
-		return 'on line ' + region.start.line;
+		return 'on line ' + region.ab.J;
 	}
-	return 'on lines ' + region.start.line + ' through ' + region.end.line;
+	return 'on lines ' + region.ab.J + ' through ' + region.ag.J;
 }
 
 
@@ -1200,7 +1200,7 @@ function _String_fromList(chars)
 
 
 
-/**/
+/**_UNUSED/
 function _Json_errorToString(error)
 {
 	return elm$json$Json$Decode$errorToString(error);
@@ -1600,11 +1600,11 @@ var _Json_encode = F2(function(indentLevel, value)
 	return JSON.stringify(_Json_unwrap(value), null, indentLevel) + '';
 });
 
-function _Json_wrap(value) { return { $: 0, a: value }; }
-function _Json_unwrap(value) { return value.a; }
+function _Json_wrap_UNUSED(value) { return { $: 0, a: value }; }
+function _Json_unwrap_UNUSED(value) { return value.a; }
 
-function _Json_wrap_UNUSED(value) { return value; }
-function _Json_unwrap_UNUSED(value) { return value; }
+function _Json_wrap(value) { return value; }
+function _Json_unwrap(value) { return value; }
 
 function _Json_emptyArray() { return []; }
 function _Json_emptyObject() { return {}; }
@@ -1841,9 +1841,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.init,
-		impl.update,
-		impl.subscriptions,
+		impl.aP,
+		impl.aY,
+		impl.aW,
 		function() { return function() {} }
 	);
 });
@@ -1856,7 +1856,7 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 function _Platform_initialize(flagDecoder, args, init, update, subscriptions, stepperBuilder)
 {
 	var result = A2(_Json_run, flagDecoder, _Json_wrap(args ? args['flags'] : undefined));
-	elm$core$Result$isOk(result) || _Debug_crash(2 /**/, _Json_errorToString(result.a) /**/);
+	elm$core$Result$isOk(result) || _Debug_crash(2 /**_UNUSED/, _Json_errorToString(result.a) /**/);
 	var managers = {};
 	result = init(result.a);
 	var model = result.a;
@@ -2255,7 +2255,7 @@ function _Platform_setupIncomingPort(name, sendToApp)
 //
 
 
-function _Platform_export_UNUSED(exports)
+function _Platform_export(exports)
 {
 	scope['Elm']
 		? _Platform_mergeExportsProd(scope['Elm'], exports)
@@ -2276,7 +2276,7 @@ function _Platform_mergeExportsProd(obj, exports)
 }
 
 
-function _Platform_export(exports)
+function _Platform_export_UNUSED(exports)
 {
 	scope['Elm']
 		? _Platform_mergeExportsDebug('Elm', scope['Elm'], exports)
@@ -2295,29 +2295,29 @@ function _Platform_mergeExportsDebug(moduleName, obj, exports)
 			: (obj[name] = exports[name]);
 	}
 }
-var author$project$StateMachine$RequestBack = {$: 'RequestBack'};
-var author$project$StateMachine$RequestForward = {$: 'RequestForward'};
+var author$project$StateMachine$RequestBack = {$: 1};
+var author$project$StateMachine$RequestForward = {$: 2};
 var author$project$StateMachine$RequestRegisterPosition = function (a) {
-	return {$: 'RequestRegisterPosition', a: a};
+	return {$: 0, a: a};
 };
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
-var elm$core$Basics$False = {$: 'False'};
-var elm$core$Basics$True = {$: 'True'};
+var elm$core$Maybe$Nothing = {$: 1};
+var elm$core$Basics$False = 1;
+var elm$core$Basics$True = 0;
 var elm$core$Result$isOk = function (result) {
-	if (result.$ === 'Ok') {
+	if (!result.$) {
 		return true;
 	} else {
 		return false;
 	}
 };
-var elm$core$Basics$EQ = {$: 'EQ'};
-var elm$core$Basics$GT = {$: 'GT'};
-var elm$core$Basics$LT = {$: 'LT'};
+var elm$core$Basics$EQ = 1;
+var elm$core$Basics$GT = 2;
+var elm$core$Basics$LT = 0;
 var elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
 		while (true) {
-			if (t.$ === 'RBEmpty_elm_builtin') {
+			if (t.$ === -2) {
 				return acc;
 			} else {
 				var key = t.b;
@@ -2363,7 +2363,7 @@ var elm$core$Dict$keys = function (dict) {
 		dict);
 };
 var elm$core$Set$toList = function (_n0) {
-	var dict = _n0.a;
+	var dict = _n0;
 	return elm$core$Dict$keys(dict);
 };
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -2373,7 +2373,7 @@ var elm$core$Array$foldr = F3(
 		var tail = _n0.d;
 		var helper = F2(
 			function (node, acc) {
-				if (node.$ === 'SubTree') {
+				if (!node.$) {
 					var subTree = node.a;
 					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
 				} else {
@@ -2393,7 +2393,7 @@ var elm$core$Array$toList = function (array) {
 var elm$core$Array$branchFactor = 32;
 var elm$core$Array$Array_elm_builtin = F4(
 	function (a, b, c, d) {
-		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
+		return {$: 0, a: a, b: b, c: c, d: d};
 	});
 var elm$core$Basics$ceiling = _Basics_ceiling;
 var elm$core$Basics$fdiv = _Basics_fdiv;
@@ -2407,10 +2407,10 @@ var elm$core$Array$shiftStep = elm$core$Basics$ceiling(
 var elm$core$Elm$JsArray$empty = _JsArray_empty;
 var elm$core$Array$empty = A4(elm$core$Array$Array_elm_builtin, 0, elm$core$Array$shiftStep, elm$core$Elm$JsArray$empty, elm$core$Elm$JsArray$empty);
 var elm$core$Array$Leaf = function (a) {
-	return {$: 'Leaf', a: a};
+	return {$: 1, a: a};
 };
 var elm$core$Array$SubTree = function (a) {
-	return {$: 'SubTree', a: a};
+	return {$: 0, a: a};
 };
 var elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
 var elm$core$List$foldl = F3(
@@ -2498,25 +2498,25 @@ var elm$core$Basics$sub = _Basics_sub;
 var elm$core$Elm$JsArray$length = _JsArray_length;
 var elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
-		if (!builder.nodeListSize) {
+		if (!builder.a) {
 			return A4(
 				elm$core$Array$Array_elm_builtin,
-				elm$core$Elm$JsArray$length(builder.tail),
+				elm$core$Elm$JsArray$length(builder.c),
 				elm$core$Array$shiftStep,
 				elm$core$Elm$JsArray$empty,
-				builder.tail);
+				builder.c);
 		} else {
-			var treeLen = builder.nodeListSize * elm$core$Array$branchFactor;
+			var treeLen = builder.a * elm$core$Array$branchFactor;
 			var depth = elm$core$Basics$floor(
 				A2(elm$core$Basics$logBase, elm$core$Array$branchFactor, treeLen - 1));
-			var correctNodeList = reverseNodeList ? elm$core$List$reverse(builder.nodeList) : builder.nodeList;
-			var tree = A2(elm$core$Array$treeFromBuilder, correctNodeList, builder.nodeListSize);
+			var correctNodeList = reverseNodeList ? elm$core$List$reverse(builder.d) : builder.d;
+			var tree = A2(elm$core$Array$treeFromBuilder, correctNodeList, builder.a);
 			return A4(
 				elm$core$Array$Array_elm_builtin,
-				elm$core$Elm$JsArray$length(builder.tail) + treeLen,
+				elm$core$Elm$JsArray$length(builder.c) + treeLen,
 				A2(elm$core$Basics$max, 5, depth * elm$core$Array$shiftStep),
 				tree,
-				builder.tail);
+				builder.c);
 		}
 	});
 var elm$core$Basics$idiv = _Basics_idiv;
@@ -2530,7 +2530,7 @@ var elm$core$Array$initializeHelp = F5(
 				return A2(
 					elm$core$Array$builderToArray,
 					false,
-					{nodeList: nodeList, nodeListSize: (len / elm$core$Array$branchFactor) | 0, tail: tail});
+					{d: nodeList, a: (len / elm$core$Array$branchFactor) | 0, c: tail});
 			} else {
 				var leaf = elm$core$Array$Leaf(
 					A3(elm$core$Elm$JsArray$initialize, elm$core$Array$branchFactor, fromIndex, fn));
@@ -2562,28 +2562,28 @@ var elm$core$Array$initialize = F2(
 		}
 	});
 var elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
+	return {$: 0, a: a};
 };
 var elm$core$Result$Err = function (a) {
-	return {$: 'Err', a: a};
+	return {$: 1, a: a};
 };
 var elm$core$Result$Ok = function (a) {
-	return {$: 'Ok', a: a};
+	return {$: 0, a: a};
 };
 var elm$json$Json$Decode$Failure = F2(
 	function (a, b) {
-		return {$: 'Failure', a: a, b: b};
+		return {$: 3, a: a, b: b};
 	});
 var elm$json$Json$Decode$Field = F2(
 	function (a, b) {
-		return {$: 'Field', a: a, b: b};
+		return {$: 0, a: a, b: b};
 	});
 var elm$json$Json$Decode$Index = F2(
 	function (a, b) {
-		return {$: 'Index', a: a, b: b};
+		return {$: 1, a: a, b: b};
 	});
 var elm$json$Json$Decode$OneOf = function (a) {
-	return {$: 'OneOf', a: a};
+	return {$: 2, a: a};
 };
 var elm$core$Basics$and = _Basics_and;
 var elm$core$Basics$append = _Utils_append;
@@ -2685,12 +2685,12 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 		errorToStringHelp:
 		while (true) {
 			switch (error.$) {
-				case 'Field':
+				case 0:
 					var f = error.a;
 					var err = error.b;
 					var isSimple = function () {
 						var _n1 = elm$core$String$uncons(f);
-						if (_n1.$ === 'Nothing') {
+						if (_n1.$ === 1) {
 							return false;
 						} else {
 							var _n2 = _n1.a;
@@ -2705,7 +2705,7 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 					error = $temp$error;
 					context = $temp$context;
 					continue errorToStringHelp;
-				case 'Index':
+				case 1:
 					var i = error.a;
 					var err = error.b;
 					var indexName = '[' + (elm$core$String$fromInt(i) + ']');
@@ -2714,7 +2714,7 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 					error = $temp$error;
 					context = $temp$context;
 					continue errorToStringHelp;
-				case 'OneOf':
+				case 2:
 					var errors = error.a;
 					if (!errors.b) {
 						return 'Ran into a Json.Decode.oneOf with no possibilities' + function () {
@@ -2779,16 +2779,16 @@ var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var author$project$StateMachine$init = function (flags) {
 	return _Utils_Tuple2(
-		{backPositions: _List_Nil, current: elm$core$Maybe$Nothing, forwardPositions: _List_Nil},
+		{f: _List_Nil, o: elm$core$Maybe$Nothing, l: _List_Nil},
 		elm$core$Platform$Cmd$none);
 };
 var elm$json$Json$Decode$null = _Json_decodeNull;
 var author$project$StateMachine$requestBack = _Platform_incomingPort(
 	'requestBack',
-	elm$json$Json$Decode$null(_Utils_Tuple0));
+	elm$json$Json$Decode$null(0));
 var author$project$StateMachine$requestForward = _Platform_incomingPort(
 	'requestForward',
-	elm$json$Json$Decode$null(_Utils_Tuple0));
+	elm$json$Json$Decode$null(0));
 var elm$json$Json$Decode$andThen = _Json_andThen;
 var elm$json$Json$Decode$field = _Json_decodeField;
 var elm$json$Json$Decode$int = _Json_decodeInt;
@@ -2806,7 +2806,7 @@ var author$project$StateMachine$requestRegisterPosition = _Platform_incomingPort
 						elm$json$Json$Decode$andThen,
 						function (column) {
 							return elm$json$Json$Decode$succeed(
-								{column: column, path: path, row: row});
+								{R: column, U: path, V: row});
 						},
 						A2(elm$json$Json$Decode$field, 'column', elm$json$Json$Decode$int));
 				},
@@ -2815,7 +2815,7 @@ var author$project$StateMachine$requestRegisterPosition = _Platform_incomingPort
 		A2(elm$json$Json$Decode$field, 'row', elm$json$Json$Decode$int)));
 var elm$core$Maybe$destruct = F3(
 	function (_default, func, maybe) {
-		if (maybe.$ === 'Just') {
+		if (!maybe.$) {
 			var a = maybe.a;
 			return func(a);
 		} else {
@@ -2834,7 +2834,7 @@ var elm$json$Json$Encode$object = function (pairs) {
 					var v = _n0.b;
 					return A3(_Json_addField, k, v, obj);
 				}),
-			_Json_emptyObject(_Utils_Tuple0),
+			_Json_emptyObject(0),
 			pairs));
 };
 var elm$json$Json$Encode$string = _Json_wrap;
@@ -2850,13 +2850,13 @@ var author$project$StateMachine$backJumped = _Platform_outgoingPort(
 						[
 							_Utils_Tuple2(
 							'column',
-							elm$json$Json$Encode$int($.column)),
+							elm$json$Json$Encode$int($.R)),
 							_Utils_Tuple2(
 							'path',
-							elm$json$Json$Encode$string($.path)),
+							elm$json$Json$Encode$string($.U)),
 							_Utils_Tuple2(
 							'row',
-							elm$json$Json$Encode$int($.row))
+							elm$json$Json$Encode$int($.V))
 						]));
 			},
 			$);
@@ -2873,13 +2873,13 @@ var author$project$StateMachine$forwardJumped = _Platform_outgoingPort(
 						[
 							_Utils_Tuple2(
 							'column',
-							elm$json$Json$Encode$int($.column)),
+							elm$json$Json$Encode$int($.R)),
 							_Utils_Tuple2(
 							'path',
-							elm$json$Json$Encode$string($.path)),
+							elm$json$Json$Encode$string($.U)),
 							_Utils_Tuple2(
 							'row',
-							elm$json$Json$Encode$int($.row))
+							elm$json$Json$Encode$int($.V))
 						]));
 			},
 			$);
@@ -3038,7 +3038,7 @@ var elm$core$List$take = F2(
 	});
 var elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
+		if (!maybe.$) {
 			var value = maybe.a;
 			return value;
 		} else {
@@ -3048,66 +3048,66 @@ var elm$core$Maybe$withDefault = F2(
 var author$project$StateMachine$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 'RequestRegisterPosition':
+			case 0:
 				var newPosition = msg.a;
 				var backPositions = function () {
-					var _n1 = model.current;
-					if (_n1.$ === 'Just') {
+					var _n1 = model.o;
+					if (!_n1.$) {
 						var currentPosition = _n1.a;
 						return (!_Utils_eq(currentPosition, newPosition)) ? A2(
 							elm$core$List$cons,
 							currentPosition,
-							A2(elm$core$List$take, 1000, model.backPositions)) : model.backPositions;
+							A2(elm$core$List$take, 1000, model.f)) : model.f;
 					} else {
-						return model.backPositions;
+						return model.f;
 					}
 				}();
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							backPositions: backPositions,
-							current: elm$core$Maybe$Just(newPosition)
+							f: backPositions,
+							o: elm$core$Maybe$Just(newPosition)
 						}),
 					elm$core$Platform$Cmd$none);
-			case 'RequestBack':
-				if (elm$core$List$isEmpty(model.backPositions)) {
+			case 1:
+				if (elm$core$List$isEmpty(model.f)) {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				} else {
 					var newForwardPositions = function () {
-						var _n3 = model.current;
-						if (_n3.$ === 'Just') {
+						var _n3 = model.o;
+						if (!_n3.$) {
 							var position = _n3.a;
-							var _n4 = elm$core$List$head(model.forwardPositions);
-							if (_n4.$ === 'Just') {
+							var _n4 = elm$core$List$head(model.l);
+							if (!_n4.$) {
 								var headOfForward = _n4.a;
-								return _Utils_eq(position, headOfForward) ? model.forwardPositions : A2(elm$core$List$cons, position, model.forwardPositions);
+								return _Utils_eq(position, headOfForward) ? model.l : A2(elm$core$List$cons, position, model.l);
 							} else {
-								return A2(elm$core$List$cons, position, model.forwardPositions);
+								return A2(elm$core$List$cons, position, model.l);
 							}
 						} else {
-							return model.forwardPositions;
+							return model.l;
 						}
 					}();
 					var newCurrent = function () {
-						var _n2 = elm$core$List$head(model.backPositions);
-						if (_n2.$ === 'Just') {
+						var _n2 = elm$core$List$head(model.f);
+						if (!_n2.$) {
 							var position = _n2.a;
 							return elm$core$Maybe$Just(position);
 						} else {
-							return model.current;
+							return model.o;
 						}
 					}();
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
-								backPositions: A2(
+								f: A2(
 									elm$core$Maybe$withDefault,
 									_List_Nil,
-									elm$core$List$tail(model.backPositions)),
-								current: newCurrent,
-								forwardPositions: newForwardPositions
+									elm$core$List$tail(model.f)),
+								o: newCurrent,
+								l: newForwardPositions
 							}),
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
@@ -3116,43 +3116,43 @@ var author$project$StateMachine$update = F2(
 								])));
 				}
 			default:
-				if (elm$core$List$isEmpty(model.forwardPositions)) {
+				if (elm$core$List$isEmpty(model.l)) {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				} else {
 					var newCurrent = function () {
-						var _n7 = elm$core$List$head(model.forwardPositions);
-						if (_n7.$ === 'Just') {
+						var _n7 = elm$core$List$head(model.l);
+						if (!_n7.$) {
 							var position = _n7.a;
 							return elm$core$Maybe$Just(position);
 						} else {
-							return model.current;
+							return model.o;
 						}
 					}();
 					var newBackPositions = function () {
-						var _n5 = model.current;
-						if (_n5.$ === 'Just') {
+						var _n5 = model.o;
+						if (!_n5.$) {
 							var position = _n5.a;
-							var _n6 = elm$core$List$head(model.backPositions);
-							if (_n6.$ === 'Just') {
+							var _n6 = elm$core$List$head(model.f);
+							if (!_n6.$) {
 								var headOfBack = _n6.a;
-								return _Utils_eq(position, headOfBack) ? model.backPositions : A2(elm$core$List$cons, position, model.backPositions);
+								return _Utils_eq(position, headOfBack) ? model.f : A2(elm$core$List$cons, position, model.f);
 							} else {
-								return A2(elm$core$List$cons, position, model.backPositions);
+								return A2(elm$core$List$cons, position, model.f);
 							}
 						} else {
-							return model.backPositions;
+							return model.f;
 						}
 					}();
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
-								backPositions: newBackPositions,
-								current: newCurrent,
-								forwardPositions: A2(
+								f: newBackPositions,
+								o: newCurrent,
+								l: A2(
 									elm$core$Maybe$withDefault,
 									_List_Nil,
-									elm$core$List$tail(model.forwardPositions))
+									elm$core$List$tail(model.l))
 							}),
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
@@ -3170,8 +3170,8 @@ var elm$core$Platform$worker = _Platform_worker;
 var elm$core$Platform$Sub$batch = _Platform_batch;
 var author$project$StateMachine$main = elm$core$Platform$worker(
 	{
-		init: author$project$StateMachine$init,
-		subscriptions: function (model) {
+		aP: author$project$StateMachine$init,
+		aW: function (model) {
 			return elm$core$Platform$Sub$batch(
 				_List_fromArray(
 					[
@@ -3182,7 +3182,7 @@ var author$project$StateMachine$main = elm$core$Platform$worker(
 						elm$core$Basics$always(author$project$StateMachine$RequestForward))
 					]));
 		},
-		update: author$project$StateMachine$update
+		aY: author$project$StateMachine$update
 	});
 _Platform_export({'StateMachine':{'init':author$project$StateMachine$main(
 	elm$json$Json$Decode$succeed(
