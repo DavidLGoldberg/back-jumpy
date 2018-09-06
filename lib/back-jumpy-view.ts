@@ -3,6 +3,12 @@
 /* global atom */
 import { CompositeDisposable, Range, Pane, TextEditor } from 'atom';
 
+interface Position {
+    row: number;
+    column: number;
+    path: string;
+}
+
 export default class BackJumpyView {
     disposables: CompositeDisposable;
     stateMachine: any;
@@ -12,14 +18,14 @@ export default class BackJumpyView {
         this.stateMachine = stateMachine;
 
         // subscriptions:
-        this.stateMachine.ports.backJumped.subscribe((position: any) => {
+        this.stateMachine.ports.backJumped.subscribe((position: Position) => {
             this.jump(position);
         });
-        this.stateMachine.ports.forwardJumped.subscribe((position: any) => {
+        this.stateMachine.ports.forwardJumped.subscribe((position: Position) => {
             this.jump(position);
         });
 
-        // commands
+        // Register commands:
         this.disposables.add(
             atom.commands.add('atom-workspace', {
                 'back-jumpy:back': () => {
@@ -31,15 +37,16 @@ export default class BackJumpyView {
             })
         );
 
-        // on did cursor change position
+        // Watch for cursor change positions:
         this.disposables.add(
             atom.workspace.observeTextEditors((textEditor: TextEditor) => {
                 this.disposables.add(
                     textEditor.onDidChangeCursorPosition((event:any) => {
-                        const newPosition = [
-                            event.newBufferPosition.row,
-                            event.newBufferPosition.column
-                        ];
+                        const newPosition = {
+                            row: event.newBufferPosition.row,
+                            column: event.newBufferPosition.column,
+                            path: textEditor.getURI()
+                        };
                         this.stateMachine.ports.requestRegisterPosition.send(newPosition);
                     })
                 )
@@ -47,14 +54,17 @@ export default class BackJumpyView {
         );
     }
 
-    jump(position: any) {
-        const textEditor:TextEditor = atom.workspace.getActiveTextEditor();
-        textEditor.setCursorBufferPosition(position);
-        this.animateBeacon(textEditor, position);
+    jump(position: Position) {
+        atom.workspace.open(position.path, {searchAllPanes: true})
+        .then((textEditor:TextEditor) => {
+            textEditor.setCursorBufferPosition([position.row, position.column]);
+            this.animateBeacon(position, textEditor); // have it so send it
+        });
     }
 
-    animateBeacon(textEditor: TextEditor, position: any) {
-        const range = Range(position, position);
+    animateBeacon(position: Position, textEditor:TextEditor) {
+        const pos = [position.row, position.column];
+        const range = Range(pos, pos);
         const marker = textEditor.markScreenRange(range, { invalidate: 'never' });
         const beacon = document.createElement('span');
         beacon.classList.add('back-jumpy-beacon'); // For styling and tests

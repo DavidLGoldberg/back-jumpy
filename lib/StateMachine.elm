@@ -2,7 +2,7 @@ port module StateMachine exposing (Flags, Model, Msg(..), Position, backJumped, 
 
 import Html as Html exposing (..)
 import Html.Events as Events exposing (..)
-import Json.Decode as Json
+import Json.Decode as Json exposing (int)
 import List exposing (..)
 import Maybe exposing (..)
 import Process
@@ -26,11 +26,18 @@ main =
 
 
 type alias Position =
-    List Int
+    { row : Int
+    , column : Int
+    , path : String
+    }
 
 
 
 -- Outbound
+{- TODO: Do I really want maybes here?
+   Alternatively should I actually send a Nothing?
+   Ie. to avoid unnecessary setCursor (for other apps for example)
+-}
 
 
 port backJumped : Maybe Position -> Cmd msg
@@ -84,18 +91,19 @@ update msg model =
     case msg of
         RequestRegisterPosition newPosition ->
             let
+                -- todo: change this so that like it always just makes current == newPosition (since no change)..just make sure back isn't affected
                 m =
-                    if newPosition == (model.current |> withDefault [ 0, 0 ]) then
-                        model
+                    case model.current of
+                        Nothing ->
+                            { model
+                                | current = Just newPosition
+                            }
 
-                    else
-                        case model.current of
-                            Nothing ->
-                                { model
-                                    | current = Just newPosition
-                                }
+                        Just current ->
+                            if current == newPosition then
+                                model
 
-                            Just current ->
+                            else
                                 { model
                                     | current = Just newPosition
 

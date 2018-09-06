@@ -2789,11 +2789,30 @@ var author$project$StateMachine$requestBack = _Platform_incomingPort(
 var author$project$StateMachine$requestForward = _Platform_incomingPort(
 	'requestForward',
 	elm$json$Json$Decode$null(_Utils_Tuple0));
+var elm$json$Json$Decode$andThen = _Json_andThen;
+var elm$json$Json$Decode$field = _Json_decodeField;
 var elm$json$Json$Decode$int = _Json_decodeInt;
-var elm$json$Json$Decode$list = _Json_decodeList;
+var elm$json$Json$Decode$string = _Json_decodeString;
+var elm$json$Json$Decode$succeed = _Json_succeed;
 var author$project$StateMachine$requestRegisterPosition = _Platform_incomingPort(
 	'requestRegisterPosition',
-	elm$json$Json$Decode$list(elm$json$Json$Decode$int));
+	A2(
+		elm$json$Json$Decode$andThen,
+		function (row) {
+			return A2(
+				elm$json$Json$Decode$andThen,
+				function (path) {
+					return A2(
+						elm$json$Json$Decode$andThen,
+						function (column) {
+							return elm$json$Json$Decode$succeed(
+								{column: column, path: path, row: row});
+						},
+						A2(elm$json$Json$Decode$field, 'column', elm$json$Json$Decode$int));
+				},
+				A2(elm$json$Json$Decode$field, 'path', elm$json$Json$Decode$string));
+		},
+		A2(elm$json$Json$Decode$field, 'row', elm$json$Json$Decode$int)));
 var elm$core$Maybe$destruct = F3(
 	function (_default, func, maybe) {
 		if (maybe.$ === 'Just') {
@@ -2804,23 +2823,42 @@ var elm$core$Maybe$destruct = F3(
 		}
 	});
 var elm$json$Json$Encode$int = _Json_wrap;
-var elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(_Utils_Tuple0),
-				entries));
-	});
 var elm$json$Json$Encode$null = _Json_encodeNull;
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var elm$json$Json$Encode$string = _Json_wrap;
 var author$project$StateMachine$backJumped = _Platform_outgoingPort(
 	'backJumped',
 	function ($) {
 		return A3(
 			elm$core$Maybe$destruct,
 			elm$json$Json$Encode$null,
-			elm$json$Json$Encode$list(elm$json$Json$Encode$int),
+			function ($) {
+				return elm$json$Json$Encode$object(
+					_List_fromArray(
+						[
+							_Utils_Tuple2(
+							'column',
+							elm$json$Json$Encode$int($.column)),
+							_Utils_Tuple2(
+							'path',
+							elm$json$Json$Encode$string($.path)),
+							_Utils_Tuple2(
+							'row',
+							elm$json$Json$Encode$int($.row))
+						]));
+			},
 			$);
 	});
 var author$project$StateMachine$forwardJumped = _Platform_outgoingPort(
@@ -2829,7 +2867,21 @@ var author$project$StateMachine$forwardJumped = _Platform_outgoingPort(
 		return A3(
 			elm$core$Maybe$destruct,
 			elm$json$Json$Encode$null,
-			elm$json$Json$Encode$list(elm$json$Json$Encode$int),
+			function ($) {
+				return elm$json$Json$Encode$object(
+					_List_fromArray(
+						[
+							_Utils_Tuple2(
+							'column',
+							elm$json$Json$Encode$int($.column)),
+							_Utils_Tuple2(
+							'path',
+							elm$json$Json$Encode$string($.path)),
+							_Utils_Tuple2(
+							'row',
+							elm$json$Json$Encode$int($.row))
+						]));
+			},
 			$);
 	});
 var elm$core$List$head = function (list) {
@@ -2998,34 +3050,24 @@ var author$project$StateMachine$update = F2(
 			case 'RequestRegisterPosition':
 				var newPosition = msg.a;
 				var m = function () {
-					if (_Utils_eq(
-						newPosition,
-						A2(
-							elm$core$Maybe$withDefault,
-							_List_fromArray(
-								[0, 0]),
-							model.current))) {
-						return model;
+					var _n1 = model.current;
+					if (_n1.$ === 'Nothing') {
+						return _Utils_update(
+							model,
+							{
+								current: elm$core$Maybe$Just(newPosition)
+							});
 					} else {
-						var _n1 = model.current;
-						if (_n1.$ === 'Nothing') {
-							return _Utils_update(
-								model,
-								{
-									current: elm$core$Maybe$Just(newPosition)
-								});
-						} else {
-							var current = _n1.a;
-							return _Utils_update(
-								model,
-								{
-									backPositions: A2(
-										elm$core$List$cons,
-										current,
-										A2(elm$core$List$take, 1000, model.backPositions)),
-									current: elm$core$Maybe$Just(newPosition)
-								});
-						}
+						var current = _n1.a;
+						return _Utils_eq(current, newPosition) ? model : _Utils_update(
+							model,
+							{
+								backPositions: A2(
+									elm$core$List$cons,
+									current,
+									A2(elm$core$List$take, 1000, model.backPositions)),
+								current: elm$core$Maybe$Just(newPosition)
+							});
 					}
 				}();
 				return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
@@ -3127,7 +3169,6 @@ var elm$core$Basics$always = F2(
 	});
 var elm$core$Platform$worker = _Platform_worker;
 var elm$core$Platform$Sub$batch = _Platform_batch;
-var elm$json$Json$Decode$succeed = _Json_succeed;
 var author$project$StateMachine$main = elm$core$Platform$worker(
 	{
 		init: author$project$StateMachine$init,

@@ -14,7 +14,7 @@ class BackJumpyView {
         this.stateMachine.ports.forwardJumped.subscribe((position) => {
             this.jump(position);
         });
-        // commands
+        // Register commands:
         this.disposables.add(atom.commands.add('atom-workspace', {
             'back-jumpy:back': () => {
                 this.stateMachine.ports.requestBack.send(null);
@@ -23,24 +23,28 @@ class BackJumpyView {
                 this.stateMachine.ports.requestForward.send(null);
             }
         }));
-        // on did cursor change position
+        // Watch for cursor change positions:
         this.disposables.add(atom.workspace.observeTextEditors((textEditor) => {
             this.disposables.add(textEditor.onDidChangeCursorPosition((event) => {
-                const newPosition = [
-                    event.newBufferPosition.row,
-                    event.newBufferPosition.column
-                ];
+                const newPosition = {
+                    row: event.newBufferPosition.row,
+                    column: event.newBufferPosition.column,
+                    path: textEditor.getURI()
+                };
                 this.stateMachine.ports.requestRegisterPosition.send(newPosition);
             }));
         }));
     }
     jump(position) {
-        const textEditor = atom.workspace.getActiveTextEditor();
-        textEditor.setCursorBufferPosition(position);
-        this.animateBeacon(textEditor, position);
+        atom.workspace.open(position.path, { searchAllPanes: true })
+            .then((textEditor) => {
+            textEditor.setCursorBufferPosition([position.row, position.column]);
+            this.animateBeacon(position, textEditor); // have it so send it
+        });
     }
-    animateBeacon(textEditor, position) {
-        const range = atom_1.Range(position, position);
+    animateBeacon(position, textEditor) {
+        const pos = [position.row, position.column];
+        const range = atom_1.Range(pos, pos);
         const marker = textEditor.markScreenRange(range, { invalidate: 'never' });
         const beacon = document.createElement('span');
         beacon.classList.add('back-jumpy-beacon'); // For styling and tests
