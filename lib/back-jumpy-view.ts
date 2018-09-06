@@ -55,11 +55,19 @@ export default class BackJumpyView {
     }
 
     jump(position: Position) {
-        atom.workspace.open(position.path, {searchAllPanes: true})
-        .then((textEditor:TextEditor) => {
-            textEditor.setCursorBufferPosition([position.row, position.column]);
-            this.animateBeacon(position, textEditor); // have it so send it
-        });
+        const textEditor:TextEditor = atom.workspace.getActiveTextEditor();
+        if (textEditor.getURI() == position.path) {
+            this._jump(position, textEditor);
+        } else { // need to open it:
+            atom.workspace.open(position.path, {searchAllPanes: true})
+            .then((textEditor:TextEditor) => {
+                this._jump(position, textEditor);
+            });
+        }
+    }
+    _jump(position:Position, textEditor:TextEditor) {
+        textEditor.setCursorBufferPosition([position.row, position.column]);
+        this.animateBeacon(position, textEditor); // have it so send it
     }
 
     animateBeacon(position: Position, textEditor:TextEditor) {

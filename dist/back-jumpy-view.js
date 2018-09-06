@@ -36,11 +36,20 @@ class BackJumpyView {
         }));
     }
     jump(position) {
-        atom.workspace.open(position.path, { searchAllPanes: true })
-            .then((textEditor) => {
-            textEditor.setCursorBufferPosition([position.row, position.column]);
-            this.animateBeacon(position, textEditor); // have it so send it
-        });
+        const textEditor = atom.workspace.getActiveTextEditor();
+        if (textEditor.getURI() == position.path) {
+            this._jump(position, textEditor);
+        }
+        else {
+            atom.workspace.open(position.path, { searchAllPanes: true })
+                .then((textEditor) => {
+                this._jump(position, textEditor);
+            });
+        }
+    }
+    _jump(position, textEditor) {
+        textEditor.setCursorBufferPosition([position.row, position.column]);
+        this.animateBeacon(position, textEditor); // have it so send it
     }
     animateBeacon(position, textEditor) {
         const pos = [position.row, position.column];
