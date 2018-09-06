@@ -91,27 +91,23 @@ update msg model =
     case msg of
         RequestRegisterPosition newPosition ->
             let
-                -- todo: change this so that like it always just makes current == newPosition (since no change)..just make sure back isn't affected
-                m =
+                backPositions =
                     case model.current of
-                        Nothing ->
-                            { model
-                                | current = Just newPosition
-                            }
-
-                        Just current ->
-                            if current == newPosition then
-                                model
+                        Just currentPosition ->
+                            if currentPosition /= newPosition then
+                                --This is really the only asymetry.  Forward positions are only born out of history.
+                                currentPosition :: take 1000 model.backPositions
 
                             else
-                                { model
-                                    | current = Just newPosition
+                                -- Don't change anything in back positions if newPosition == currentPosition
+                                model.backPositions
 
-                                    --This is really the only asymetry.  Forward positions are only born out of history.
-                                    , backPositions = current :: take 1000 model.backPositions
-                                }
+                        Nothing ->
+                            model.backPositions
             in
-            ( m, Cmd.none )
+            ( { model | current = Just newPosition, backPositions = backPositions }
+            , Cmd.none
+            )
 
         -- The following 2 handlers are symetrical (no diff of note) ...could be abstracted, but might be more complicated
         RequestBack ->

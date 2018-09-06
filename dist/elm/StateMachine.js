@@ -2884,6 +2884,7 @@ var author$project$StateMachine$forwardJumped = _Platform_outgoingPort(
 			},
 			$);
 	});
+var elm$core$Basics$neq = _Utils_notEqual;
 var elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -3049,28 +3050,26 @@ var author$project$StateMachine$update = F2(
 		switch (msg.$) {
 			case 'RequestRegisterPosition':
 				var newPosition = msg.a;
-				var m = function () {
+				var backPositions = function () {
 					var _n1 = model.current;
-					if (_n1.$ === 'Nothing') {
-						return _Utils_update(
-							model,
-							{
-								current: elm$core$Maybe$Just(newPosition)
-							});
+					if (_n1.$ === 'Just') {
+						var currentPosition = _n1.a;
+						return (!_Utils_eq(currentPosition, newPosition)) ? A2(
+							elm$core$List$cons,
+							currentPosition,
+							A2(elm$core$List$take, 1000, model.backPositions)) : model.backPositions;
 					} else {
-						var current = _n1.a;
-						return _Utils_eq(current, newPosition) ? model : _Utils_update(
-							model,
-							{
-								backPositions: A2(
-									elm$core$List$cons,
-									current,
-									A2(elm$core$List$take, 1000, model.backPositions)),
-								current: elm$core$Maybe$Just(newPosition)
-							});
+						return model.backPositions;
 					}
 				}();
-				return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							backPositions: backPositions,
+							current: elm$core$Maybe$Just(newPosition)
+						}),
+					elm$core$Platform$Cmd$none);
 			case 'RequestBack':
 				if (elm$core$List$isEmpty(model.backPositions)) {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
