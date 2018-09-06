@@ -2,6 +2,8 @@
 
 An Atom package to return to previous cursor positions.
 
+Works great with or without [Jumpy](https://atom.io/packages/jumpy) or [Jumpy-beacon](https://atom.io/packages/jumpy-beacon).
+
 ## How to "back-jump"
 
 1.  Move your cursor somewhere in a text editor.
@@ -18,24 +20,30 @@ On command line:
 ```
 apm install back-jumpy
 ```
+or the for the whole jumpy suite:
+```
+apm install jumpy jumpy-beacon back-jumpy
+```
 
 ## Notes
 
-*   Works great with or without [Jumpy](https://atom.io/packages/jumpy) or [Jumpy-beacon](https://atom.io/packages/jumpy-beacon).
 
 ### 'vim-mode/vim-mode-plus' Users (Strongly Recommended Override)
 
-Put this override in your **'Atom'** -> **'Keymap...'** settings:
+Put this override in your **'Atom'** -> **'Keymap...'** settings.
 
-    'atom-text-editor:not(.mini).vim-mode:not(.insert-mode), .tree-view':
+for `vim-mode`:
+
+    'atom-text-editor:not(.mini):not(.jumpy-jump-mode).vim-mode:not(.insert-mode), .tree-view':
         'backspace': 'back-jumpy:back'
         'shift-backspace': 'back-jumpy:forward'
 
-or if `vim-mode-plus`:
+for `vim-mode-plus`:
 
-    'atom-text-editor:not(.mini).vim-mode-plus:not(.insert-mode), .tree-view':
+    'atom-text-editor:not(.mini):not(.jumpy-jump-mode).vim-mode-plus:not(.insert-mode), .tree-view':
         'backspace': 'back-jumpy:back'
         'shift-backspace': 'back-jumpy:forward'
+
 
 This will **bind <kbd>backspace</kbd> and <kbd>shift backspace</kbd> to jump back and forward**.
 
