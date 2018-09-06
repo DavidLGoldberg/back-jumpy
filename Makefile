@@ -18,3 +18,4 @@ graph:
 
 test:
 	apm test
+	elm-test
