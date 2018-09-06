@@ -2841,6 +2841,13 @@ var elm$core$List$head = function (list) {
 		return elm$core$Maybe$Nothing;
 	}
 };
+var elm$core$List$isEmpty = function (xs) {
+	if (!xs.b) {
+		return true;
+	} else {
+		return false;
+	}
+};
 var elm$core$List$tail = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -3023,7 +3030,7 @@ var author$project$StateMachine$update = F2(
 				}();
 				return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
 			case 'RequestBack':
-				if (!elm$core$List$length(model.backPositions)) {
+				if (elm$core$List$isEmpty(model.backPositions)) {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				} else {
 					var newForwardPositions = function () {
@@ -3068,7 +3075,7 @@ var author$project$StateMachine$update = F2(
 								])));
 				}
 			default:
-				if (!elm$core$List$length(model.forwardPositions)) {
+				if (elm$core$List$isEmpty(model.forwardPositions)) {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				} else {
 					var newCurrent = function () {

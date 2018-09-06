@@ -107,7 +107,7 @@ update msg model =
 
         -- The following 2 handlers are symetrical (no diff of note) ...could be abstracted, but might be more complicated
         RequestBack ->
-            if length model.backPositions == 0 then
+            if model.backPositions |> isEmpty then
                 -- TODO: Could do a cmd for a port to visual bell or status or both
                 ( model, Cmd.none )
 
@@ -150,7 +150,7 @@ update msg model =
                 )
 
         RequestForward ->
-            if length model.forwardPositions == 0 then
+            if model.forwardPositions |> isEmpty then
                 -- TODO: Could do a cmd for a port to visual bell or status or both
                 ( model, Cmd.none )
 
