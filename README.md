@@ -11,9 +11,11 @@ Works great with or without [Jumpy](https://atom.io/packages/jumpy) or [Jumpy-be
 3.  Enter a hotkey to jump back!
 4.  Keep coding!
 
+<!---
 [ ![Back-Jumpy in Action!][1]](https://raw.githubusercontent.com/DavidLGoldberg/back-jumpy/master/_images/back-jumpy.gif)
 
 [1]: https://raw.githubusercontent.com/DavidLGoldberg/back-jumpy/master/_images/back-jumpy.gif
+-->
 
 ## Install
 On command line:
