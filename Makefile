@@ -18,8 +18,8 @@ graph:
 	node_modules/madge/bin/cli.js --image graph.svg ./dist
 
 test:
-	apm test
 	elm-test
+	apm test
 
 count:
 	rg --files | grep -v \.js$ | grep -v dist | grep -v \.png$ | grep -v \.gif$ | grep -v package-lock.json | xargs wc -l | sort -n
