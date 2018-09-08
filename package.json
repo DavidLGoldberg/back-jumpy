@@ -15,7 +15,8 @@
     "tab",
     "productivity",
     "plugin",
-    "extension"
+    "extension",
+    "jumpy"
   ],
   "repository": "https://github.com/DavidLGoldberg/back-jumpy",
   "license": "MIT",
