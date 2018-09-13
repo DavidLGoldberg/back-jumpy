@@ -25,14 +25,17 @@ class BackJumpyView {
         }));
         // Watch for cursor change positions:
         this.disposables.add(atom.workspace.observeTextEditors((textEditor) => {
-            this.disposables.add(textEditor.onDidChangeCursorPosition((event) => {
-                const newPosition = {
-                    row: event.newBufferPosition.row,
-                    column: event.newBufferPosition.column,
-                    path: textEditor.getURI()
-                };
-                this.stateMachine.ports.requestRegisterPosition.send(newPosition);
-            }));
+            const path = textEditor.getURI();
+            if (path) {
+                this.disposables.add(textEditor.onDidChangeCursorPosition((event) => {
+                    const newPosition = {
+                        row: event.newBufferPosition.row,
+                        column: event.newBufferPosition.column,
+                        path: path
+                    };
+                    this.stateMachine.ports.requestRegisterPosition.send(newPosition);
+                }));
+            }
         }));
     }
     jump(position) {

@@ -40,16 +40,19 @@ export default class BackJumpyView {
         // Watch for cursor change positions:
         this.disposables.add(
             atom.workspace.observeTextEditors((textEditor: TextEditor) => {
-                this.disposables.add(
-                    textEditor.onDidChangeCursorPosition((event:any) => {
-                        const newPosition = {
-                            row: event.newBufferPosition.row,
-                            column: event.newBufferPosition.column,
-                            path: textEditor.getURI()
-                        };
-                        this.stateMachine.ports.requestRegisterPosition.send(newPosition);
-                    })
-                )
+                const path = textEditor.getURI();
+                if (path) { // handle path of undefined for new tabs
+                    this.disposables.add(
+                        textEditor.onDidChangeCursorPosition((event:any) => {
+                            const newPosition = {
+                                row: event.newBufferPosition.row,
+                                column: event.newBufferPosition.column,
+                                path: path
+                            };
+                            this.stateMachine.ports.requestRegisterPosition.send(newPosition);
+                        })
+                    )
+                }
             })
         );
     }
