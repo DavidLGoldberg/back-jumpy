@@ -3,18 +3,18 @@
 
 @import "ui-variables";
 
-.back-jumpy-beacon {
+.back-jumpy-beacon-back {
     display: block;
     position: absolute;
     border-radius: 1px;
     width: 2px;
     height: 2px;
     z-index: -1;
-    -webkit-animation: ripple .085s;
+    -webkit-animation: ripple-back .085s;
     content: '';
     top: -6px;
 }
-@-webkit-keyframes ripple {
+@-webkit-keyframes ripple-back {
     0% {
         box-shadow:0 0 0 0 transparent,
                    0 0 0 0 transparent,
@@ -29,6 +29,29 @@
     }
     100% {
         box-shadow:0 0 4px 24px @background-color-error,
+                   0 0 0 0 transparent,
+                   0 0 0 0 transparent,
+                   0 0 0 0 transparent;
+    }
+}
+.back-jumpy-beacon-forward:extend(.back-jumpy-beacon-back) {
+    -webkit-animation: ripple-forward .085s;
+}
+@-webkit-keyframes ripple-forward {
+    0% {
+        box-shadow:0 0 0 0 transparent,
+                   0 0 0 0 transparent,
+                   0 0 0 0 transparent,
+                   0 0 0 0 transparent;
+    }
+    5%  {
+        box-shadow:0 0 0 0 @background-color-success,
+                   0 0 0 0 rgba(255,255,255,0.5),
+                   0 0 0 0 @background-color-success,
+                   0 0 0 0 rgba(0,0,0,0.1);
+    }
+    100% {
+        box-shadow:0 0 4px 24px @background-color-success,
                    0 0 0 0 transparent,
                    0 0 0 0 transparent,
                    0 0 0 0 transparent;

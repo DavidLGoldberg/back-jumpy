@@ -3,16 +3,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /* global atom */
 const atom_1 = require("atom");
+var Direction;
+(function (Direction) {
+    Direction[Direction["Back"] = 0] = "Back";
+    Direction[Direction["Forward"] = 1] = "Forward";
+})(Direction || (Direction = {}));
 class BackJumpyView {
     constructor(serializedState, stateMachine) {
         this.disposables = new atom_1.CompositeDisposable();
         this.stateMachine = stateMachine;
         // subscriptions:
         this.stateMachine.ports.backJumped.subscribe((position) => {
-            this.jump(position);
+            this.jump(position, Direction.Back);
         });
         this.stateMachine.ports.forwardJumped.subscribe((position) => {
-            this.jump(position);
+            this.jump(position, Direction.Forward);
         });
         // Register commands:
         this.disposables.add(atom.commands.add('atom-workspace', {
@@ -38,28 +43,30 @@ class BackJumpyView {
             }
         }));
     }
-    jump(position) {
+    jump(position, direction) {
         const textEditor = atom.workspace.getActiveTextEditor();
         if (textEditor.getURI() == position.path) {
-            this._jump(position, textEditor);
+            this._jump(position, textEditor, direction);
         }
         else {
             atom.workspace.open(position.path, { searchAllPanes: true })
                 .then((textEditor) => {
-                this._jump(position, textEditor);
+                this._jump(position, textEditor, direction);
             });
         }
     }
-    _jump(position, textEditor) {
+    _jump(position, textEditor, direction) {
         textEditor.setCursorBufferPosition([position.row, position.column]);
-        this.animateBeacon(position, textEditor); // have it so send it
+        this.animateBeacon(position, textEditor, direction); // have it so send it
     }
-    animateBeacon(position, textEditor) {
+    animateBeacon(position, textEditor, direction) {
         const pos = [position.row, position.column];
         const range = atom_1.Range(pos, pos);
         const marker = textEditor.markScreenRange(range, { invalidate: 'never' });
         const beacon = document.createElement('span');
-        beacon.classList.add('back-jumpy-beacon'); // For styling and tests
+        beacon.classList.add(direction === Direction.Forward
+            ? 'back-jumpy-beacon-forward'
+            : 'back-jumpy-beacon-back'); // For styling and tests
         textEditor.decorateMarker(marker, {
             item: beacon,
             type: 'overlay'

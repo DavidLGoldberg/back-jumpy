@@ -9,6 +9,11 @@ interface Position {
     path: string;
 }
 
+enum Direction {
+    Back,
+    Forward,
+}
+
 export default class BackJumpyView {
     disposables: CompositeDisposable;
     stateMachine: any;
@@ -19,10 +24,10 @@ export default class BackJumpyView {
 
         // subscriptions:
         this.stateMachine.ports.backJumped.subscribe((position: Position) => {
-            this.jump(position);
+            this.jump(position, Direction.Back);
         });
         this.stateMachine.ports.forwardJumped.subscribe((position: Position) => {
-            this.jump(position);
+            this.jump(position, Direction.Forward);
         });
 
         // Register commands:
@@ -57,28 +62,32 @@ export default class BackJumpyView {
         );
     }
 
-    jump(position: Position) {
+    jump(position:Position, direction:Direction) {
         const textEditor:TextEditor = atom.workspace.getActiveTextEditor();
         if (textEditor.getURI() == position.path) {
-            this._jump(position, textEditor);
+            this._jump(position, textEditor, direction);
         } else { // need to open it:
             atom.workspace.open(position.path, {searchAllPanes: true})
             .then((textEditor:TextEditor) => {
-                this._jump(position, textEditor);
+                this._jump(position, textEditor, direction);
             });
         }
     }
-    _jump(position:Position, textEditor:TextEditor) {
+    _jump(position:Position, textEditor:TextEditor, direction:Direction) {
         textEditor.setCursorBufferPosition([position.row, position.column]);
-        this.animateBeacon(position, textEditor); // have it so send it
+        this.animateBeacon(position, textEditor, direction); // have it so send it
     }
 
-    animateBeacon(position: Position, textEditor:TextEditor) {
+    animateBeacon(position: Position, textEditor:TextEditor, direction: Direction) {
         const pos = [position.row, position.column];
         const range = Range(pos, pos);
         const marker = textEditor.markScreenRange(range, { invalidate: 'never' });
         const beacon = document.createElement('span');
-        beacon.classList.add('back-jumpy-beacon'); // For styling and tests
+        beacon.classList.add(
+            direction === Direction.Forward
+            ? 'back-jumpy-beacon-forward'
+            : 'back-jumpy-beacon-back'
+        ); // For styling and tests
         textEditor.decorateMarker(marker,
             {
                 item: beacon,
