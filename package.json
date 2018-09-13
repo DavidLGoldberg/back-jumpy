@@ -3,7 +3,7 @@
   "author": "David L. Goldberg",
   "atomTestRunner": "./spec/custom-runner",
   "main": "./dist/back-jumpy",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "An Atom package to return to previous cursor positions",
   "keywords": [
     "back",
