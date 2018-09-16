@@ -86,6 +86,48 @@ init flags =
     )
 
 
+shift : List Position -> List Position -> Maybe Position -> ( List Position, List Position, Maybe Position )
+shift from to current =
+    -- so when going 'back' you're really shifting the stacks from back to forward direction wise
+    if from |> isEmpty then
+        ( from, to, current )
+
+    else
+        let
+            newCurrent =
+                case head from of
+                    Just position ->
+                        Just position
+
+                    Nothing ->
+                        current
+
+            newToPositions =
+                case current of
+                    Just position ->
+                        case head to of
+                            Just headOfForward ->
+                                if position == headOfForward then
+                                    -- no change already have it.
+                                    to
+
+                                else
+                                    --new position
+                                    position :: to
+
+                            Nothing ->
+                                -- empty so just concat it always
+                                position :: to
+
+                    Nothing ->
+                        to
+        in
+        ( from |> tail |> withDefault []
+        , newToPositions
+        , newCurrent
+        )
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -111,87 +153,27 @@ update msg model =
 
         -- The following 2 handlers are symetrical (no diff of note) ...could be abstracted, but might be more complicated
         RequestBack ->
-            if model.backPositions |> isEmpty then
-                -- TODO: Could do a cmd for a port to visual bell or status or both
-                ( model, Cmd.none )
-
-            else
-                let
-                    newCurrent =
-                        case head model.backPositions of
-                            Just position ->
-                                Just position
-
-                            Nothing ->
-                                model.current
-
-                    newForwardPositions =
-                        case model.current of
-                            Just position ->
-                                case head model.forwardPositions of
-                                    Just headOfForward ->
-                                        if position == headOfForward then
-                                            -- no change already have it.
-                                            model.forwardPositions
-
-                                        else
-                                            --new position
-                                            position :: model.forwardPositions
-
-                                    Nothing ->
-                                        -- empty so just concat it always
-                                        position :: model.forwardPositions
-
-                            Nothing ->
-                                model.forwardPositions
-                in
-                ( { model
-                    | forwardPositions = newForwardPositions
-                    , current = newCurrent
-                    , backPositions = model.backPositions |> tail |> withDefault []
-                  }
-                , Cmd.batch [ backJumped newCurrent ]
-                )
+            let
+                ( from, to, current ) =
+                    shift model.backPositions model.forwardPositions model.current
+            in
+            ( { model
+                | backPositions = from
+                , forwardPositions = to
+                , current = current
+              }
+            , Cmd.batch [ backJumped current ]
+            )
 
         RequestForward ->
-            if model.forwardPositions |> isEmpty then
-                -- TODO: Could do a cmd for a port to visual bell or status or both
-                ( model, Cmd.none )
-
-            else
-                let
-                    newCurrent =
-                        case head model.forwardPositions of
-                            Just position ->
-                                Just position
-
-                            Nothing ->
-                                model.current
-
-                    newBackPositions =
-                        case model.current of
-                            Just position ->
-                                case head model.backPositions of
-                                    Just headOfBack ->
-                                        if position == headOfBack then
-                                            -- no change already have it.
-                                            model.backPositions
-
-                                        else
-                                            --new position
-                                            position :: model.backPositions
-
-                                    Nothing ->
-                                        -- empty so just concat it always
-                                        position :: model.backPositions
-
-                            Nothing ->
-                                model.backPositions
-                in
-                ( { model
-                    | backPositions = newBackPositions
-                    , current = newCurrent
-                    , forwardPositions = model.forwardPositions |> List.tail |> withDefault []
-                  }
-                , Cmd.batch [ forwardJumped newCurrent ]
-                )
+            let
+                ( from, to, current ) =
+                    shift model.forwardPositions model.backPositions model.current
+            in
+            ( { model
+                | backPositions = to
+                , forwardPositions = from
+                , current = current
+              }
+            , Cmd.batch [ backJumped current ]
+            )
