@@ -95,29 +95,29 @@ shift from to current =
     else
         let
             newCurrent =
-                case head from of
-                    Just position ->
-                        Just position
-
-                    Nothing ->
+                case from of
+                    [] ->
                         current
+
+                    front :: rest ->
+                        Just front
 
             newToPositions =
                 case current of
                     Just position ->
-                        case head to of
-                            Just headOfForward ->
-                                if position == headOfForward then
+                        case to of
+                            [] ->
+                                -- empty so just concat it always
+                                position :: to
+
+                            front :: rest ->
+                                if position == front then
                                     -- no change already have it.
                                     to
 
                                 else
                                     --new position
                                     position :: to
-
-                            Nothing ->
-                                -- empty so just concat it always
-                                position :: to
 
                     Nothing ->
                         to
