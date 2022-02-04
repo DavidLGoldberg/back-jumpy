@@ -1,4 +1,4 @@
-# Back-Jumpy
+# Back-Jumpy (WIP!)
 
 An Atom package to return to previous cursor positions.
 
@@ -66,6 +66,10 @@ Just override the `.back-jumpy-beacon` class from [beacon.less](https://raw.gith
 *   [Jumpy](https://atom.io/packages/jumpy)
 *   [Jumpy-beacon](https://atom.io/packages/jumpy-beacon)
 *   [Qolor](https://atom.io/packages/qolor)
+
+## My VS Code version of Jumpy :))
+
+*   [Jumpy2](https://marketplace.visualstudio.com/items?itemName=DavidLGoldberg.jumpy2) (Jumpy for VS Code from it's original author!)
 
 ## Keywords
 
